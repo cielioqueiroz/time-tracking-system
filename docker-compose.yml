@@ -1,0 +1,50 @@
+# ════════════════════════════════════════════════════════════════════════
+#  Local / containerized environment for the Time Tracking System.
+#  Usage:  docker compose up -d        (Postgres only, for local dev)
+#          docker compose --profile full up -d   (Postgres + backend)
+# ════════════════════════════════════════════════════════════════════════
+services:
+
+  # ───────────────────────────── PostgreSQL ─────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: timetracking-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-timetracking}
+      POSTGRES_USER: ${DB_USERNAME:-timetracking}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-timetracking}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-timetracking} -d ${DB_NAME:-timetracking}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ───────────────────────────── Backend API ────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: timetracking-backend
+    profiles: ["full"]
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-timetracking}
+      DB_USERNAME: ${DB_USERNAME:-timetracking}
+      DB_PASSWORD: ${DB_PASSWORD:-timetracking}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+
+volumes:
+  postgres-data:
+    driver: local

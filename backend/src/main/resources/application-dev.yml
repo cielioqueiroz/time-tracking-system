@@ -1,0 +1,17 @@
+# ─────────────────────────────────────────────────────────────────────────
+#  DEV profile — local development against the Docker Compose Postgres.
+# ─────────────────────────────────────────────────────────────────────────
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/timetracking}
+    username: ${DB_USERNAME:timetracking}
+    password: ${DB_PASSWORD:timetracking}
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+
+logging:
+  level:
+    com.company.timetracking: DEBUG
+    org.hibernate.SQL: DEBUG

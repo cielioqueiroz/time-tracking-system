@@ -1,0 +1,32 @@
+# ───────────────────────────── OS / Editor ─────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+*.swp
+
+# ───────────────────────────── Backend (Java / Maven) ──────────────────
+backend/target/
+backend/.mvn/
+backend/!.mvn/wrapper/maven-wrapper.jar
+backend/*.log
+backend/HELP.md
+
+# ───────────────────────────── Frontend (Flutter / Dart) ───────────────
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.packages
+frontend/build/
+frontend/.pub-cache/
+frontend/.pub/
+frontend/**/*.g.dart.lock
+
+# ───────────────────────────── Env / Secrets ───────────────────────────
+.env
+*.env.local
+!*.env.example
+
+# ───────────────────────────── Docker ──────────────────────────────────
+docker-data/
