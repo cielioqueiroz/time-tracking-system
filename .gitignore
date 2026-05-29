@@ -30,3 +30,8 @@ frontend/**/*.g.dart.lock
 
 # ───────────────────────────── Docker ──────────────────────────────────
 docker-data/
+
+# ───────────────────────────── Local-only (não versionar) ──────────────
+# Arquivo de trabalho pessoal e configs locais do editor de IA.
+resume.md
+.claude/

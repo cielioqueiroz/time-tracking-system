@@ -3,17 +3,29 @@
 [![CI](https://github.com/cielioqueiroz/time-tracking-system/actions/workflows/ci.yml/badge.svg)](https://github.com/cielioqueiroz/time-tracking-system/actions/workflows/ci.yml)
 
 Sistema full-stack de **registro de ponto** com qualidade de produção: cadastro de
-colaboradores, controle de jornadas (iniciar / encerrar com cálculo automático de
-horas) e histórico paginado — construído sobre **Arquitetura Hexagonal + Clean
-Architecture** no backend e **Feature-based + Atomic Design** no frontend.
+colaboradores, controle de jornadas (iniciar/encerrar com cálculo automático de
+horas), histórico em linha do tempo, **relatório de horas** e **exportação CSV** —
+construído sobre **Arquitetura Hexagonal + Clean Architecture** no backend e
+**Feature-based + Atomic Design** no frontend.
 
-O projeto prioriza separação de responsabilidades, domínio rico com invariantes,
-tratamento de erros consistente e uma camada de UI premium e responsiva.
+> Este README é um guia **passo a passo** para clonar e rodar o projeto do zero na
+> sua máquina, sem quebrar nada. Se algo der errado, veja a seção
+> [🛟 Solução de problemas](#-solução-de-problemas) no fim.
 
-**Funcionalidades:** cadastro/edição/exclusão de colaboradores · início e
-encerramento de jornada (com cálculo automático de horas) · histórico paginado em
-linha do tempo · **resumo de horas trabalhadas** por colaborador (agregado no banco)
-· **exportação das jornadas em CSV**.
+---
+
+## 📑 Sumário
+- [Stack](#-stack)
+- [Funcionalidades](#-funcionalidades)
+- [Arquitetura](#-arquitetura)
+- [Pré-requisitos](#-pré-requisitos-instale-antes-de-começar)
+- [Passo a passo para rodar](#-passo-a-passo-para-rodar-localmente)
+- [Rodando os testes](#-rodando-os-testes)
+- [Referência da API](#-referência-da-api)
+- [Autenticação](#-autenticação-jwt)
+- [Integração contínua (CI)](#-integração-contínua-ci)
+- [Estrutura do projeto](#-estrutura-do-projeto)
+- [Solução de problemas](#-solução-de-problemas)
 
 ---
 
@@ -23,117 +35,170 @@ linha do tempo · **resumo de horas trabalhadas** por colaborador (agregado no b
 |--------|-------------|
 | **Backend** | Java 21 · Spring Boot 3.4 · Spring Data JPA · PostgreSQL 16 · Flyway · Spring Security + JWT (`jjwt`) · springdoc-openapi |
 | **Frontend** | Flutter · Dart · Riverpod · go_router · dio · google_fonts (Manrope + JetBrains Mono) · modelos imutáveis manuais (sem codegen) |
-| **Testes** | JUnit 5 · Mockito · AssertJ · Testcontainers (PostgreSQL) · `flutter_test` (frontend) |
+| **Testes** | JUnit 5 · Mockito · AssertJ · Testcontainers (PostgreSQL) · `flutter_test` |
 | **Infra / CI** | Docker · Docker Compose · GitHub Actions |
+
+---
+
+## ✨ Funcionalidades
+- Cadastro, edição e exclusão de colaboradores (e-mail único).
+- Início e encerramento de jornada, com **cálculo automático de horas** e status do colaborador.
+- Histórico de jornadas paginado, em linha do tempo.
+- **Relatório de horas** por colaborador (total de jornadas, finalizadas e minutos) — agregado no banco.
+- **Exportação das jornadas em CSV**.
+- Autenticação **JWT** (stateless), documentação **Swagger/OpenAPI**.
 
 ---
 
 ## 🏛️ Arquitetura
 
-### Backend — Hexagonal / Clean
+**Backend — Hexagonal / Clean.** Dependências sempre para dentro:
+`presentation → application → domain ← infrastructure`.
+- `domain`: núcleo puro (entidades ricas, value objects, exceções, **portas**).
+- `application`: casos de uso, DTOs, commands/queries, mappers.
+- `infrastructure`: adapters de saída (JPA, segurança/JWT, config).
+- `presentation`: controllers REST, requests (Bean Validation), presenters, `GlobalExceptionHandler`.
 
-Fluxo de dependências sempre para dentro: `presentation → application → domain ← infrastructure`.
-
-- **`domain`** — núcleo puro, sem framework. Entidades ricas (`Collaborator`,
-  `WorkSession`) que protegem as próprias invariantes, value objects (`Email`,
-  `WorkPeriod`, `CollaboratorId`, `WorkSessionId`), enums, exceções de domínio e as
-  **portas** (interfaces de repositório).
-- **`application`** — casos de uso (um por operação), DTOs, commands, queries e
-  mappers. Orquestra o domínio; não conhece HTTP nem JPA.
-- **`infrastructure`** — adapters de saída: implementações JPA das portas, segurança
-  (filtro JWT, entry point), configuração (clock, CORS, OpenAPI).
-- **`presentation`** — adapters de entrada: controllers REST finos, requests com Bean
-  Validation, presenters (DTO → view model) e o `GlobalExceptionHandler`.
-
-> A inversão de dependência mantém o domínio testável de forma isolada e o torna
-> imune a trocas de framework/banco.
-
-### Frontend — Feature-based + Atomic Design
-
-Cada feature (`auth`, `collaborators`, `work_sessions`) isola `data / domain /
-application / presentation`. O **Design System** é centralizado em camadas
+**Frontend — Feature-based + Atomic Design.** Cada feature isola
+`data / domain / application / presentation`; Design System em camadas
 (`tokens → foundations → atoms → molecules → layouts`). A UI nunca faz HTTP nem
-contém regra de negócio — repositórios traduzem erros de transporte em `Failure`s
-e os providers Riverpod expõem o estado para a tela.
+contém regra de negócio.
 
 ---
 
-## 📁 Estrutura
+## ✅ Pré-requisitos (instale antes de começar)
 
-```
-.
-├── backend/                # API Spring Boot (pacotes documentados em package-info.java)
-│   ├── src/main/java/com/company/timetracking/
-│   │   ├── domain/         # entidades, VOs, enums, exceções, portas
-│   │   ├── application/    # use cases, DTOs, commands, queries, mappers
-│   │   ├── infrastructure/ # adapters JPA, security/JWT, config
-│   │   └── presentation/   # controllers, requests, responses, presenters, handlers
-│   └── src/test/java/...   # testes de domínio e de casos de uso
-├── frontend/               # App Flutter (estrutura em frontend/lib/STRUCTURE.md)
-│   ├── lib/app/...
-│   └── test/               # testes unitários e de widget
-├── docker-compose.yml      # PostgreSQL (+ backend no profile `full`)
-└── .env.example
-```
+| Ferramenta | Versão mínima | Verifique com |
+|-----------|----------------|----------------|
+| **Git** | qualquer recente | `git --version` |
+| **Java JDK** | **21** (ex.: Temurin 21) | `java -version` |
+| **Maven** | 3.9+ | `mvn -v` |
+| **Flutter SDK** | 3.5+ (traz o Dart 3.5+) | `flutter --version` |
+| **Docker Desktop** | recente, **em execução** | `docker --version` e `docker ps` |
 
----
+> ⚠️ **Windows:** depois de instalar essas ferramentas, **feche e reabra o terminal**
+> (ou reinicie o VS Code) para o `PATH` ser atualizado. Se um comando como `mvn`,
+> `java` ou `flutter` aparecer como *"não é reconhecido"*, veja
+> [Solução de problemas → PATH](#1-comando-não-é-reconhecido-mvn-java-flutter-docker).
 
-## ▶️ Como executar
-
-### Pré-requisitos
-- **Java 21+** e **Maven 3.9+**
-- **Flutter SDK 3.4+**
-- **Docker** + **Docker Compose**
-
-### 1. Banco de dados
+Confirme que tudo responde antes de prosseguir:
 ```bash
-cp .env.example .env          # ajuste segredos se desejar
-docker compose up -d          # sobe o PostgreSQL (porta 5432)
+git --version
+java -version
+mvn -v
+flutter --version
+docker ps        # o Docker Desktop precisa estar aberto/rodando
 ```
 
-### 2. Backend
+---
+
+## ▶️ Passo a passo para rodar localmente
+
+A aplicação tem **3 peças** que sobem separadamente: **banco (Docker)**,
+**backend (Spring Boot)** e **frontend (Flutter web)**. Rode nesta ordem.
+
+### 1. Clonar o repositório
+```bash
+git clone https://github.com/cielioqueiroz/time-tracking-system.git
+cd time-tracking-system
+```
+
+### 2. Subir o banco de dados (PostgreSQL via Docker)
+O `docker-compose.yml` sobe um PostgreSQL 16 já configurado.
+
+```bash
+# 1) copie o arquivo de variáveis de ambiente (não precisa editar para uso local)
+cp .env.example .env          # no Windows PowerShell: Copy-Item .env.example .env
+
+# 2) suba o Postgres (Docker Desktop precisa estar rodando)
+docker compose up -d
+
+# 3) confirme que está de pé e "healthy"
+docker compose ps
+```
+> O banco fica exposto em `localhost:5432` (db/usuário/senha: `timetracking`).
+> Os dados persistem num volume Docker entre reinícios.
+
+### 3. Subir o backend (API Spring Boot)
+Em **um terminal** dedicado, a partir da pasta do projeto:
+
 ```bash
 cd backend
-mvn spring-boot:run           # http://localhost:8080
-# Swagger UI:  http://localhost:8080/swagger-ui.html
-# Health:      http://localhost:8080/actuator/health
+mvn spring-boot:run
+```
+Ou, gerando o jar e executando (perfil de desenvolvimento):
+```bash
+cd backend
+mvn -B clean package -DskipTests
+# bash:
+SPRING_PROFILES_ACTIVE=dev java -jar target/time-tracking.jar
+# Windows PowerShell:
+$env:SPRING_PROFILES_ACTIVE="dev"; java -jar target\time-tracking.jar
 ```
 
-> No Windows (PowerShell), para gerar o jar e rodar:
-> ```powershell
-> mvn -B clean package -DskipTests
-> $env:SPRING_PROFILES_ACTIVE="dev"; java -jar target\time-tracking.jar
-> ```
+Quando aparecer **`Started TimeTrackingApplication`**, o backend está no ar:
+- API: `http://localhost:8080`
+- **Swagger UI:** `http://localhost:8080/swagger-ui.html` (explore e teste a API aqui)
+- Health: `http://localhost:8080/actuator/health` (deve responder `{"status":"UP"}`)
+- A migração do schema (Flyway) roda **automaticamente** no startup.
 
-### 3. Frontend
+> 💡 Esse terminal fica **ocupado** mostrando os logs do backend — isso é normal.
+> Não o feche enquanto estiver usando a aplicação. Para parar o backend, use `Ctrl+C`.
+
+### 4. Subir o frontend (Flutter web)
+Em **outro terminal** (deixe o backend rodando no primeiro):
+
 ```bash
 cd frontend
 flutter pub get
-flutter run -d chrome         # autentica sozinho (admin/admin) no bootstrap
+flutter run -d chrome
 ```
+O Chrome abre sozinho com o app, que **já autentica** com o usuário padrão
+(`admin/admin`) e mostra a lista de colaboradores.
 
-### Tudo em containers (opcional)
+> Comandos úteis enquanto o `flutter run` está ativo: **`r`** = hot reload,
+> **`R`** = hot restart, **`q`** = sair. (Apertar `q` encerra o app — basta rodar
+> `flutter run -d chrome` de novo para voltar.)
+
+#### Apontar o frontend para outra URL de API
+Por padrão o frontend chama `http://localhost:8080`. Para mudar (ex.: backend em
+outra máquina), use `--dart-define`:
 ```bash
-docker compose --profile full up -d   # PostgreSQL + backend
+flutter run -d chrome --dart-define=API_BASE_URL=http://192.168.0.10:8080
 ```
 
----
-
-## 🔐 Autenticação (JWT)
-
-A API é **stateless**. O fluxo:
-
-1. `POST /api/v1/auth/login` com `{ "username": "admin", "password": "admin" }`
-   retorna um token Bearer.
-2. As demais rotas exigem o header `Authorization: Bearer <token>`.
-3. Rotas públicas: login, Swagger/OpenAPI e `/actuator/health`. Qualquer outra
-   requisição sem token válido recebe **401** em JSON (via entry point dedicado).
-
-> Usuário padrão de desenvolvimento: **`admin` / `admin`**.
+### (Opcional) Subir backend + banco juntos via Docker
+Em vez de rodar o backend pelo Maven, você pode subir tudo em containers:
+```bash
+docker compose --profile full up -d
+```
+Isso sobe PostgreSQL **e** o backend (no perfil `prod`). Defina um `JWT_SECRET`
+forte no `.env` antes (veja `.env.example`).
 
 ---
 
-## 🌐 Referência de endpoints
+## 🧪 Rodando os testes
+
+```bash
+# Backend — testes unitários (rápidos, NÃO precisam de Docker)
+cd backend && mvn test
+
+# Backend — unitários + integração (sobe um PostgreSQL real via Testcontainers)
+cd backend && mvn verify
+
+# Frontend
+cd frontend && flutter analyze && flutter test
+```
+
+> **Sobre o `mvn verify` e o Docker:** os testes de integração (classes `*IT`) usam
+> **Testcontainers**, que precisa de um Docker acessível. Se nenhum ambiente Docker
+> utilizável for encontrado, esses testes são **pulados automaticamente** (não
+> falham) — então `mvn verify` continua **verde** em qualquer máquina. Com Docker
+> disponível (ou no CI), eles **rodam de verdade** contra um PostgreSQL real.
+
+---
+
+## 🌐 Referência da API
 
 Base: `/api/v1`
 
@@ -142,98 +207,114 @@ Base: `/api/v1`
 | `POST` | `/auth/login` | — | Autentica e emite o token JWT |
 | `GET`  | `/collaborators?page=&size=` | ✅ | Lista colaboradores (paginado) |
 | `POST` | `/collaborators` | ✅ | Cria colaborador |
-| `GET`  | `/collaborators/{id}` | ✅ | Busca colaborador por id |
+| `GET`  | `/collaborators/{id}` | ✅ | Busca por id |
 | `PUT`  | `/collaborators/{id}` | ✅ | Atualiza nome/e-mail |
 | `DELETE` | `/collaborators/{id}` | ✅ | Exclui colaborador (e suas jornadas) |
 | `POST` | `/collaborators/{id}/work-sessions/start` | ✅ | Inicia a jornada |
 | `POST` | `/collaborators/{id}/work-sessions/finish` | ✅ | Encerra a jornada em andamento |
-| `GET`  | `/collaborators/{id}/work-sessions?page=&size=` | ✅ | Histórico de jornadas (mais recentes primeiro) |
-| `GET`  | `/collaborators/{id}/work-sessions/summary?from=&to=` | ✅ | Resumo de horas (total/finalizadas/minutos), período opcional |
-| `GET`  | `/collaborators/{id}/work-sessions/export` | ✅ | Exporta as jornadas do colaborador em CSV (download) |
+| `GET`  | `/collaborators/{id}/work-sessions?page=&size=` | ✅ | Histórico (mais recentes primeiro) |
+| `GET`  | `/collaborators/{id}/work-sessions/summary?from=&to=` | ✅ | Resumo de horas (período opcional) |
+| `GET`  | `/collaborators/{id}/work-sessions/export` | ✅ | Exporta as jornadas em CSV |
 
 ### Envelope de resposta
-
-Toda resposta usa um envelope previsível:
-
 ```jsonc
 // sucesso
 { "success": true, "data": { ... }, "timestamp": "2026-05-29T12:00:00Z" }
-
 // erro
-{
-  "success": false,
-  "errors": [{ "code": "EMAIL_ALREADY_EXISTS", "message": "...", "field": null }],
-  "timestamp": "2026-05-29T12:00:00Z"
-}
+{ "success": false, "errors": [{ "code": "EMAIL_ALREADY_EXISTS", "message": "...", "field": null }],
+  "timestamp": "2026-05-29T12:00:00Z" }
 ```
 
----
-
-## 📐 Regras de negócio (e o HTTP correspondente)
-
+### Regras de negócio × HTTP
 | Regra | Resultado |
 |-------|-----------|
-| E-mail único (case-insensitive) | `409 Conflict` ao duplicar |
-| Uma jornada ativa por colaborador | `409 Conflict` ao iniciar a segunda |
+| E-mail único (case-insensitive) | `409 Conflict` |
+| Uma jornada ativa por colaborador | `409 Conflict` |
 | Encerrar sem jornada em andamento | `404 Not Found` |
-| Encerrar jornada já encerrada | bloqueado na entidade (guard de domínio) |
-| Cálculo de horas | `totalMinutes` derivado automaticamente ao encerrar |
-| Status do colaborador | alterna `TRABALHANDO` / `FORA_DA_JORNADA` automaticamente |
-| Validação de payload | `400 Bad Request` com erros por campo |
+| Validação de payload | `400 Bad Request` (erros por campo) |
 | Sem token / token inválido | `401 Unauthorized` |
 
 ---
 
-## 🧪 Testes
+## 🔐 Autenticação (JWT)
 
-```bash
-# Backend — testes unitários (rápidos, sem Docker)
-cd backend && mvn test
+A API é **stateless**:
+1. `POST /api/v1/auth/login` com `{ "username": "admin", "password": "admin" }` → retorna um token Bearer.
+2. As demais rotas exigem o header `Authorization: Bearer <token>`.
+3. Rotas públicas: login, Swagger/OpenAPI e `/actuator/health`.
 
-# Backend — unitários + integração (sobe um PostgreSQL real via Testcontainers)
-cd backend && mvn verify
+> Usuário padrão de desenvolvimento: **`admin` / `admin`** (configurável por variáveis
+> de ambiente — veja `.env.example`). O frontend já faz esse login sozinho no start.
 
-# Frontend (flutter_test)
-cd frontend && flutter analyze && flutter test
-```
+---
 
-Cobertura atual:
-- **Unitários (backend):** entidades, value objects e os 8 casos de uso (criação,
-  atualização, exclusão, consulta, listagem e início/encerramento/histórico de
-  jornada), incluindo os caminhos de erro de cada regra de negócio.
-- **Integração (backend):** fluxo HTTP ponta a ponta contra um PostgreSQL real
-  (Testcontainers) — login JWT, CRUD de colaborador, ciclo de jornada e os status
-  HTTP de cada regra (401/400/404/409). Exercita controllers + filtro JWT +
-  `GlobalExceptionHandler` + adapters JPA + migrations Flyway.
-- **Frontend:** serialização dos models, formatters de data/hora/duração, mapeamento
-  de erros de rede (`DioException → Failure`) e widgets do Design System.
+## 🔄 Integração contínua (CI)
 
-> **Testcontainers exige Docker.** Os testes de integração (`*IT`) rodam apenas no
-> `mvn verify`; se nenhum ambiente Docker utilizável for encontrado, eles são
-> **pulados automaticamente** (nunca falham), então `mvn verify` permanece verde em
-> qualquer máquina. No **CI** (GitHub Actions, Docker disponível) eles rodam de fato.
-
-## 🔄 Integração contínua
-
-O workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda a cada push/PR
-na `main`:
-- **Backend:** `mvn verify` (unitários + integração com PostgreSQL real).
+O workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda a cada push/PR na `main`:
+- **Backend:** `mvn verify` (unitários + integração com PostgreSQL real via Testcontainers).
 - **Frontend:** `flutter analyze` + `flutter test`.
 
----
-
-## 🚀 Melhorias futuras
-
-- Perfis de usuário e papéis (RBAC) além do admin único.
-- Edição/correção manual de jornadas com trilha de auditoria.
-- Relatórios e exportação (CSV/PDF) por período.
-- Testes de integração end-to-end (Testcontainers no backend; integração no front).
-- Pipeline CI/CD (build, testes e análise estática automatizados).
+O status aparece no badge no topo deste README e na aba **Actions** do GitHub.
 
 ---
 
-## 📝 Continuidade
+## 📁 Estrutura do projeto
 
-O progresso detalhado por etapa está em [`resume.md`](resume.md).
-Decisões técnicas e estrutura de pastas do frontend em
-[`frontend/lib/STRUCTURE.md`](frontend/lib/STRUCTURE.md).
+```
+.
+├── backend/                # API Spring Boot
+│   ├── src/main/java/com/company/timetracking/
+│   │   ├── domain/         # entidades, VOs, enums, exceções, portas
+│   │   ├── application/    # use cases, DTOs, commands, queries, mappers
+│   │   ├── infrastructure/ # adapters JPA, security/JWT, config
+│   │   └── presentation/   # controllers, requests, responses, presenters, handlers
+│   ├── src/test/java/...   # testes unitários e de integração (*IT)
+│   └── src/main/resources/ # application.yml + migrations Flyway
+├── frontend/               # App Flutter (web)
+│   ├── lib/app/...         # core, design_system, features, routes
+│   └── test/               # testes
+├── .github/workflows/ci.yml
+├── docker-compose.yml      # PostgreSQL (+ backend no profile `full`)
+└── .env.example
+```
+
+---
+
+## 🛟 Solução de problemas
+
+### 1. Comando *"não é reconhecido"* (`mvn`, `java`, `flutter`, `docker`)
+O `PATH` do terminal está desatualizado (comum no Windows logo após instalar as ferramentas).
+- **Solução simples:** feche o terminal e abra um novo (ou reinicie o VS Code).
+- **Solução na hora (PowerShell):** cole esta linha e rode os comandos de novo:
+  ```powershell
+  $env:Path = [Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [Environment]::GetEnvironmentVariable("Path","User")
+  ```
+
+### 2. `docker: ... not recognized` ou erro de conexão
+O **Docker Desktop não está aberto/rodando**. Abra o Docker Desktop, espere ficar
+"Engine running" e rode `docker ps` para confirmar.
+
+### 3. Porta já em uso (`5432` ou `8080`)
+Algo já está usando a porta.
+- Postgres (5432): pare outro Postgres local, ou mude `DB_PORT` no `.env`.
+- Backend (8080): pare o processo na porta, ou rode com `SERVER_PORT=8081`.
+
+### 4. `Cannot find path ...\backend\backend`
+Você rodou `cd backend` estando **já dentro** de `backend`. Confirme onde está com
+`pwd` e ajuste (rode os comandos do backend a partir da pasta `backend`).
+
+### 5. Falha ao gerar o jar: *"Unable to rename ... time-tracking.jar"*
+Há um **backend ainda rodando** segurando o arquivo. Pare o processo Java
+(feche o terminal do backend ou `Ctrl+C`) e rode o `mvn package` de novo.
+
+### 6. `mvn verify` "pula" os testes de integração
+É o comportamento esperado quando **não há Docker utilizável**. Com o Docker Desktop
+aberto e funcional, eles rodam. O build fica verde nos dois casos.
+
+### 7. Frontend não conecta na API / erro de rede
+- O backend está rodando em `http://localhost:8080`? (cheque o `/actuator/health`).
+- Rodando o front em outra origem? Use `--dart-define=API_BASE_URL=...` (seção acima).
+
+---
+
+> Dúvidas ou problemas para rodar? Abra uma issue no repositório.
