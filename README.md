@@ -178,13 +178,28 @@ outra máquina), use `--dart-define`:
 flutter run -d chrome --dart-define=API_BASE_URL=http://192.168.0.10:8080
 ```
 
-### (Opcional) Subir backend + banco juntos via Docker
-Em vez de rodar o backend pelo Maven, você pode subir tudo em containers:
+### Alternativa: rodar TUDO em Docker (sem Maven/Flutter na máquina)
+Em vez de subir backend e frontend manualmente, você pode rodar o stack inteiro em
+containers com um único comando:
 ```bash
-docker compose --profile full up -d
+cp .env.example .env          # Windows PowerShell: Copy-Item .env.example .env
+docker compose --profile full up -d --build
 ```
-Isso sobe PostgreSQL **e** o backend (no perfil `prod`). Defina um `JWT_SECRET`
-forte no `.env` antes (veja `.env.example`).
+Isso constrói e sobe **três** containers:
+
+| Serviço | Porta | Descrição |
+|---------|-------|-----------|
+| `postgres` | `5432` | Banco PostgreSQL 16 |
+| `backend`  | `8080` | API Spring Boot (perfil `prod`) |
+| `frontend` | `8081` | Flutter web (build de produção) servido por Nginx |
+
+Depois é só abrir **http://localhost:8081**. O frontend chama a API em
+`http://localhost:8080` (ajustável pela variável `API_BASE_URL` no `.env`).
+
+> ⏱️ A **primeira** build demora alguns minutos (baixa a imagem do Flutter e compila
+> o web release). As próximas usam cache e são rápidas.
+> Para parar tudo: `docker compose --profile full down` (acrescente `-v` para também
+> apagar o banco e começar do zero). Defina um `JWT_SECRET` forte no `.env` para uso real.
 
 ---
 
@@ -290,9 +305,11 @@ O status aparece no badge no topo deste README e na aba **Actions** do GitHub.
 │   └── src/main/resources/ # application.yml + migrations Flyway
 ├── frontend/               # App Flutter (web)
 │   ├── lib/app/...         # core, design_system, features, routes
-│   └── test/               # testes
+│   ├── test/               # testes
+│   ├── Dockerfile          # build web release + Nginx
+│   └── nginx.conf          # serve o SPA (fallback p/ index.html)
 ├── .github/workflows/ci.yml
-├── docker-compose.yml      # PostgreSQL (+ backend no profile `full`)
+├── docker-compose.yml      # Postgres + backend + frontend (profile `full`)
 └── .env.example
 ```
 

@@ -29,7 +29,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      SPRING_PROFILES_ACTIVE: prod
       DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-timetracking}
       DB_USERNAME: ${DB_USERNAME:-timetracking}
       DB_PASSWORD: ${DB_PASSWORD:-timetracking}
@@ -37,6 +37,20 @@ services:
       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
     ports:
       - "${SERVER_PORT:-8080}:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        API_BASE_URL: ${API_BASE_URL:-http://localhost:8080}
+    container_name: timetracking-frontend
+    profiles: ["full"]
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-8081}:80"
 
 volumes:
   postgres-data:
