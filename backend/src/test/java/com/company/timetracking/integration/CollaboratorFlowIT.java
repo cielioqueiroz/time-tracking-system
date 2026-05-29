@@ -142,6 +142,59 @@ class CollaboratorFlowIT extends AbstractIntegrationTest {
     }
 
     @Test
+    void summaryReflectsFinishedSessions() {
+        String token = adminToken();
+        String id = createCollaborator(token, "Edu", "edu@empresa.com");
+        send(HttpMethod.POST, COLLABORATORS + "/" + id + "/work-sessions/start", token, null);
+        send(HttpMethod.POST, COLLABORATORS + "/" + id + "/work-sessions/finish", token, null);
+
+        var response = send(HttpMethod.GET, COLLABORATORS + "/" + id + "/work-sessions/summary", token, null);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        var data = readTree(response.getBody()).path("data");
+        assertThat(data.path("totalSessions").asLong()).isEqualTo(1L);
+        assertThat(data.path("finishedSessions").asLong()).isEqualTo(1L);
+        assertThat(data.path("totalMinutes").asLong()).isGreaterThanOrEqualTo(0L);
+    }
+
+    @Test
+    void exportReturnsCsvWithSessions() {
+        String token = adminToken();
+        String id = createCollaborator(token, "Fran", "fran@empresa.com");
+        send(HttpMethod.POST, COLLABORATORS + "/" + id + "/work-sessions/start", token, null);
+        send(HttpMethod.POST, COLLABORATORS + "/" + id + "/work-sessions/finish", token, null);
+
+        var response = send(HttpMethod.GET, COLLABORATORS + "/" + id + "/work-sessions/export", token, null);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getHeaders().getContentType().toString()).contains("text/csv");
+        assertThat(response.getHeaders().getFirst("Content-Disposition")).contains("attachment");
+        String body = response.getBody();
+        assertThat(body).startsWith("id;status;inicio;fim;minutos");
+        assertThat(body).contains("FINALIZADA");
+    }
+
+    @Test
+    void exportForNonexistentCollaboratorReturns404() {
+        String token = adminToken();
+
+        var response = send(HttpMethod.GET,
+                COLLABORATORS + "/11111111-1111-1111-1111-111111111111/work-sessions/export", token, null);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void summaryForNonexistentCollaboratorReturns404() {
+        String token = adminToken();
+
+        var response = send(HttpMethod.GET,
+                COLLABORATORS + "/11111111-1111-1111-1111-111111111111/work-sessions/summary", token, null);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
     void getNonexistentCollaboratorReturns404() {
         String token = adminToken();
 

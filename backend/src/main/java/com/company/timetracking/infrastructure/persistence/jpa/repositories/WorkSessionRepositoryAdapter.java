@@ -5,6 +5,7 @@ import com.company.timetracking.domain.enums.WorkSessionStatus;
 import com.company.timetracking.domain.repositories.Page;
 import com.company.timetracking.domain.repositories.PageQuery;
 import com.company.timetracking.domain.repositories.WorkSessionRepository;
+import com.company.timetracking.domain.repositories.WorkSessionSummary;
 import com.company.timetracking.domain.valueobjects.CollaboratorId;
 import com.company.timetracking.domain.valueobjects.WorkSessionId;
 import com.company.timetracking.infrastructure.persistence.jpa.entities.WorkSessionJpaEntity;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 /** Outbound adapter implementing the {@link WorkSessionRepository} port. */
@@ -66,6 +69,22 @@ public class WorkSessionRepositoryAdapter implements WorkSessionRepository {
                 result.getNumber(),
                 result.getSize(),
                 result.getTotalElements()
+        );
+    }
+
+    @Override
+    public List<WorkSession> findAllByCollaborator(CollaboratorId collaboratorId) {
+        return jpa.findByCollaboratorIdOrderByStartedAtDesc(collaboratorId.value())
+                .stream().map(mapper::toDomain).toList();
+    }
+
+    @Override
+    public WorkSessionSummary summaryByCollaborator(CollaboratorId collaboratorId, Instant from, Instant to) {
+        var projection = jpa.summarizeByCollaborator(collaboratorId.value(), from, to);
+        return new WorkSessionSummary(
+                projection.getTotalSessions(),
+                projection.getFinishedSessions(),
+                projection.getTotalMinutes()
         );
     }
 }

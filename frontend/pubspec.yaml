@@ -25,6 +25,9 @@ dependencies:
   # Utils
   intl: ^0.19.0
 
+  # Web platform interop (CSV download) — the app targets Flutter web
+  web: ^1.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

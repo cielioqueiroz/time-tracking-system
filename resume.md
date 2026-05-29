@@ -169,18 +169,44 @@ Sistema de Registro de Ponto (Time Tracking) full-stack enterprise.
 > e em Docker padrão eles RODAM. Não é problema de código.
 > Verificação: `cd backend; mvn verify`  (unit + IT-skip)  ·  CI roda tudo.
 
+### ETAPA 8 — Feature: Relatório de Horas ✅ CONCLUÍDA
+- [x] Backend: `GET /api/v1/collaborators/{id}/work-sessions/summary?from=&to=` (período opcional)
+      → total de jornadas, finalizadas e minutos trabalhados. **Agregação no banco** (JPQL count/sum,
+      não em memória), via `WorkSessionRepository.summaryByCollaborator` + projection JPA.
+- [x] Novo use case `GetWorkSummaryUseCase` (+ teste unitário: 34→36 testes backend)
+- [x] Camadas completas: `WorkSummaryDto`, `WorkSummaryQuery`, `WorkSummaryResponse`, presenter, controller
+- [x] IT do endpoint no `CollaboratorFlowIT` (summary reflete jornada finalizada; 404 p/ inexistente)
+- [x] Frontend: entity `WorkSummary` + model + datasource + repo + `workSummaryProvider`;
+      `WorkSummaryCard` (total trabalhado + nº jornadas) no topo da tela de histórico
+- [x] Invalidação do resumo após start/finish e no pull-to-refresh (+2 testes front: 25→27)
+
+> Verificação: `cd backend; mvn test` (36) · `cd frontend; flutter analyze; flutter test` (27)
+
+### ETAPA 9 — Feature: Export CSV ✅ CONCLUÍDA
+- [x] Backend: `GET /api/v1/collaborators/{id}/work-sessions/export` → `text/csv` (Content-Disposition
+      attachment). `ExportWorkSessionsUseCase` + porta `findAllByCollaborator` + `WorkSessionCsvWriter`
+      (separador `;`, campos com aspas/escape). Unit test (36→38) + 2 ITs (CSV + 404).
+- [x] Frontend (web-only): dep `web ^1.1.1`, helper `file_download.dart` (Blob+anchor via package:web),
+      `exportCsv` no datasource/repo, botão `ExportCsvButton` (loading próprio + AppFeedback) na barra
+      de ações do histórico.
+- [x] **Verificação final completa:** encerrado o backend que travava o jar e rodado `mvn clean verify`
+      → BUILD SUCCESS (38 unit, 16 ITs pulados sem Docker). Frontend: analyze limpo, 27 testes.
+
+> Verificação: `cd backend; mvn clean verify` · `cd frontend; flutter analyze; flutter test`
+
 ---
 
 ## ▶️ PONTO DE RETOMADA
-Estado do código: **ETAPAS 1-7 COMPLETAS** 🎉. Backend: 34 unit (verde) + 12 ITs (rodam no CI,
+Estado do código: **ETAPAS 1-9 COMPLETAS** 🎉. Backend: 38 unit (verde) + 16 ITs (rodam no CI,
 pulam local por causa do Docker bleeding-edge), `pom.xml` enxuto. Frontend: UI premium, analyze
-limpo, 25 testes, build web OK. README profissional + badge. CI/CD GitHub Actions configurado.
+limpo, 27 testes, build web OK. README profissional + badge. CI/CD GitHub Actions. Features de
+relatório de horas e export CSV (backend + frontend). `mvn clean verify` completo = BUILD SUCCESS.
 
-**Projeto pronto para review do tech lead** (deve rodar sem erros na máquina dele: `mvn test`,
-`mvn verify` e os comandos de frontend são todos seguros — ITs pulam sem Docker, rodam com Docker).
+**Projeto pronto para review do tech lead** — roda sem erros na máquina dele: `mvn clean verify`
+e os comandos de frontend são todos seguros (ITs pulam sem Docker, rodam com Docker/CI).
 
 Próximos passos opcionais, caso queira evoluir:
-- RBAC/usuários além do admin único; edição de jornadas com auditoria; relatórios/export.
+- RBAC/usuários além do admin único; edição de jornadas com auditoria; export em PDF.
 - Confirmar o CI verde no GitHub após o push (Actions → workflow "CI").
 
 **Rodar o app completo (visual) no Chrome:**

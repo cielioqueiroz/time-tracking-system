@@ -4,6 +4,8 @@ import com.company.timetracking.domain.entities.WorkSession;
 import com.company.timetracking.domain.valueobjects.CollaboratorId;
 import com.company.timetracking.domain.valueobjects.WorkSessionId;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,4 +25,13 @@ public interface WorkSessionRepository {
 
     /** Session history of a collaborator, newest first. */
     Page<WorkSession> findByCollaborator(CollaboratorId collaboratorId, PageQuery query);
+
+    /** All sessions of a collaborator, newest first (for export). */
+    List<WorkSession> findAllByCollaborator(CollaboratorId collaboratorId);
+
+    /**
+     * Aggregated statistics for a collaborator. {@code from}/{@code to} (on
+     * {@code startedAt}) are optional bounds — pass {@code null} to leave a side open.
+     */
+    WorkSessionSummary summaryByCollaborator(CollaboratorId collaboratorId, Instant from, Instant to);
 }

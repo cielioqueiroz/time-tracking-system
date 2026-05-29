@@ -10,6 +10,11 @@ Architecture** no backend e **Feature-based + Atomic Design** no frontend.
 O projeto prioriza separação de responsabilidades, domínio rico com invariantes,
 tratamento de erros consistente e uma camada de UI premium e responsiva.
 
+**Funcionalidades:** cadastro/edição/exclusão de colaboradores · início e
+encerramento de jornada (com cálculo automático de horas) · histórico paginado em
+linha do tempo · **resumo de horas trabalhadas** por colaborador (agregado no banco)
+· **exportação das jornadas em CSV**.
+
 ---
 
 ## 🧰 Stack
@@ -143,6 +148,8 @@ Base: `/api/v1`
 | `POST` | `/collaborators/{id}/work-sessions/start` | ✅ | Inicia a jornada |
 | `POST` | `/collaborators/{id}/work-sessions/finish` | ✅ | Encerra a jornada em andamento |
 | `GET`  | `/collaborators/{id}/work-sessions?page=&size=` | ✅ | Histórico de jornadas (mais recentes primeiro) |
+| `GET`  | `/collaborators/{id}/work-sessions/summary?from=&to=` | ✅ | Resumo de horas (total/finalizadas/minutos), período opcional |
+| `GET`  | `/collaborators/{id}/work-sessions/export` | ✅ | Exporta as jornadas do colaborador em CSV (download) |
 
 ### Envelope de resposta
 

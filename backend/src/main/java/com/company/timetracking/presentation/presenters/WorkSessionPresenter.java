@@ -2,8 +2,10 @@ package com.company.timetracking.presentation.presenters;
 
 import com.company.timetracking.application.dto.PageDto;
 import com.company.timetracking.application.dto.WorkSessionDto;
+import com.company.timetracking.application.dto.WorkSummaryDto;
 import com.company.timetracking.presentation.responses.PageResponse;
 import com.company.timetracking.presentation.responses.WorkSessionResponse;
+import com.company.timetracking.presentation.responses.WorkSummaryResponse;
 import org.springframework.stereotype.Component;
 
 /** Maps work-session application DTOs to outbound view models. */
@@ -18,5 +20,11 @@ public class WorkSessionPresenter {
 
     public PageResponse<WorkSessionResponse> toPageResponse(PageDto<WorkSessionDto> page) {
         return PageResponse.from(page, this::toResponse);
+    }
+
+    public WorkSummaryResponse toSummaryResponse(WorkSummaryDto dto) {
+        return new WorkSummaryResponse(
+                dto.collaboratorId(), dto.totalSessions(),
+                dto.finishedSessions(), dto.totalMinutes());
     }
 }

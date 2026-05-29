@@ -27,6 +27,7 @@ class WorkSessionActions {
   void _afterChange(String collaboratorId) {
     _ref.invalidate(collaboratorsControllerProvider);
     _ref.invalidate(workSessionHistoryProvider(collaboratorId));
+    _ref.invalidate(workSummaryProvider(collaboratorId));
   }
 }
 

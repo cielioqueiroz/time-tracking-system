@@ -1,5 +1,6 @@
 import '../../../../core/network/error_mapper.dart';
 import '../../domain/entities/work_session.dart';
+import '../../domain/entities/work_summary.dart';
 import '../../domain/repositories/work_session_repository.dart';
 import '../datasources/work_session_remote_datasource.dart';
 
@@ -24,6 +25,14 @@ class WorkSessionRepositoryImpl implements WorkSessionRepository {
     int size = 50,
   }) =>
       _guard(() => _remote.history(collaboratorId, page: page, size: size));
+
+  @override
+  Future<WorkSummary> summary(String collaboratorId) =>
+      _guard(() => _remote.summary(collaboratorId));
+
+  @override
+  Future<String> exportCsv(String collaboratorId) =>
+      _guard(() => _remote.exportCsv(collaboratorId));
 
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {
