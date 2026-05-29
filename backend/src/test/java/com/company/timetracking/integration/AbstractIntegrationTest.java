@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Map;
@@ -29,19 +28,31 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  * controllers → use cases → JPA adapters → Flyway-migrated schema, plus the JWT
  * filter and {@code GlobalExceptionHandler}.
  *
- * <p>The container is managed by the Testcontainers JUnit extension. With
- * {@code disabledWithoutDocker = true}, these tests are <em>skipped</em> (never
- * failed) when no usable Docker environment is found — so {@code mvn verify}
- * stays green on any machine, and the suite still runs in CI where Docker is
- * available. Each test starts from a clean database.
+ * <p><b>Singleton container:</b> a single PostgreSQL is started once and shared by
+ * every IT class (it lives for the whole JVM and is torn down by Ryuk at exit).
+ * This is intentional — Spring caches and reuses the test context across IT
+ * classes, so a per-class container (started/stopped each class) would leave the
+ * cached datasource pointing at a stopped container on the second class.
+ *
+ * <p>With {@code @Testcontainers(disabledWithoutDocker = true)} the whole suite is
+ * <em>skipped</em> (never failed) when no usable Docker environment exists — so
+ * {@code mvn verify} stays green on any machine, and the tests still run in CI
+ * where Docker is available. Each test starts from a clean database.
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers(disabledWithoutDocker = true)
 abstract class AbstractIntegrationTest {
 
-    @Container
+    // Not annotated with @Container on purpose: we manage a single shared
+    // instance instead of one per class. Started lazily in the static block,
+    // which only runs once Docker is confirmed available (class isn't initialized
+    // when the disabledWithoutDocker condition skips the suite).
     static final PostgreSQLContainer<?> POSTGRES =
             new PostgreSQLContainer<>("postgres:16-alpine");
+
+    static {
+        POSTGRES.start();
+    }
 
     @DynamicPropertySource
     static void datasourceProperties(DynamicPropertyRegistry registry) {
