@@ -112,12 +112,17 @@ Sistema de Registro de Ponto (Time Tracking) full-stack enterprise.
 > # Swagger: http://localhost:8080/swagger-ui.html  (admin/admin)
 > ```
 
-### ETAPA 4 — Frontend: camadas ⬜ PENDENTE
-- [ ] Rotas (go_router)
-- [ ] Providers (Riverpod)
-- [ ] Services (network/dio + interceptors)
-- [ ] Repositories (data + domain)
-- [ ] State management (controllers + estados)
+### ETAPA 4 — Frontend: camadas ✅ CONCLUÍDA (flutter analyze: No issues found!)
+- [x] Core network: `dio_provider` (interceptor de token), `error_mapper` (DioException→Failure), `auth_session_controller`
+- [x] Feature auth: datasource + repo + `sessionBootstrapProvider` (login admin/admin no start)
+- [x] Feature collaborators: domain (entity+repo), data (model+datasource+repo impl), application (providers + `CollaboratorsController` AsyncNotifier com create/edit/delete/refresh)
+- [x] Feature work_sessions: domain (entity+repo), data (model+datasource+repo impl), application (providers + `workSessionHistoryProvider` + `WorkSessionActions` start/finish)
+- [x] Rotas (go_router): lista, novo, editar, histórico (`app_router` + `app_routes`)
+- [x] `app.dart` religado: MaterialApp.router + gate de bootstrap (splash/erro+retry)
+- [x] pubspec enxuto (removido codegen; modelos imutáveis manuais)
+
+> ⚠️ Telas ainda são PLACEHOLDERS (Scaffold "em construção"). A UI premium é a ETAPA 5.
+> Verificação: `cd frontend; flutter analyze`.
 
 ### ETAPA 5 — Frontend: telas e UX ⬜ PENDENTE
 - [ ] Collaborators screen (listagem, status, ações, loading/empty/error)
@@ -151,10 +156,17 @@ O usuário foi abrir o Docker Desktop e possivelmente reiniciar o PC. Ao voltar,
    mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
    ```
    Testar em http://localhost:8080/swagger-ui.html → login admin/admin → criar/listar colaborador.
-3. **Iniciar ETAPA 4** (frontend Flutter). Rodar no Chrome: `flutter run -d chrome`.
+3. **ETAPA 5** (telas/UX premium). Rodar o app no Chrome (precisa do backend no ar):
+   ```powershell
+   docker compose up -d                       # Postgres
+   cd backend; $env:SPRING_PROFILES_ACTIVE="dev"; java -jar target\time-tracking.jar   # backend (8080)
+   # noutro terminal:
+   cd frontend; flutter run -d chrome
+   ```
 
-> Estado do código: ETAPAS 1, 2 e 3 COMPLETAS e compilando (BUILD SUCCESS). Tudo commitado e no GitHub.
-> Falta: validar API rodando (passo 2) e então ETAPAS 4, 5, 6.
+> Estado do código: ETAPAS 1-4 COMPLETAS. Backend validado rodando. Frontend com toda a
+> arquitetura/estado/rotas prontos e `flutter analyze` limpo — só faltam as TELAS (ETAPA 5).
+> Lembrar de commitar (o usuário faz os commits).
 
 ## 📝 Notas / pendências do usuário
 - Usuário faz os commits manualmente. **O assistente NUNCA commita** — apenas fornece os comandos.
