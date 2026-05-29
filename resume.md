@@ -28,11 +28,15 @@ Sistema de Registro de Ponto (Time Tracking) full-stack enterprise.
 
 ## ⚙️ Ferramentas do ambiente (status na máquina do usuário)
 - [x] Node v24 — instalado
-- [x] Git — instalado
+- [x] Git — instalado (repo no GitHub: git@github.com:cielioqueiroz/time-tracking-system.git, branch main)
 - [x] **Java 21** — instalado (Temurin 21.0.11)
-- [x] **Maven 3.9.9** — instalado em `%LOCALAPPDATA%\Programs\Maven` (adicionado ao PATH do usuário)
-- [ ] **Flutter / Dart** — FALTA INSTALAR (necessário p/ rodar frontend — ETAPA 4/5)
-- [ ] **Docker + Docker Compose** — FALTA INSTALAR (necessário p/ subir o Postgres)
+- [x] **Maven 3.9.9** — instalado em `%LOCALAPPDATA%\Programs\Maven` (no PATH do usuário)
+- [x] **Flutter** — clonado em `%LOCALAPPDATA%\flutter` (branch stable, no PATH do usuário). Falta rodar `flutter --version` 1x (baixa Dart SDK) e `flutter doctor`.
+- [x] **Docker Desktop** — instalado via winget. Falta ABRIR o app 1x (aceitar WSL2/termos) e confirmar "Engine running". Pode exigir reiniciar o PC.
+
+> 💡 Meu shell (assistente) NÃO herda o PATH atualizado automaticamente. Para usar mvn/flutter/docker
+> nas execuções, prefixar com:
+> `$env:Path = [Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [Environment]::GetEnvironmentVariable("Path","User")`
 
 ---
 
@@ -75,14 +79,38 @@ Sistema de Registro de Ponto (Time Tracking) full-stack enterprise.
 > ⚠️ App ainda NÃO sobe (faltam os adapters JPA que implementam os ports — ETAPA 3).
 > Verificação desta etapa: `cd backend; mvn clean compile`.
 
-### ETAPA 3 — Backend: apresentação ⬜ PENDENTE
-- [ ] Controllers (collaborators, work-sessions, auth)
-- [ ] Requests + Bean Validation
-- [ ] Responses + presenters
-- [ ] Global Exception Handler completo
-- [ ] Swagger/OpenAPI documentado
-- [ ] JWT authentication
-- [ ] Paginação
+### ETAPA 3 — Backend: apresentação + persistência ✅ CONCLUÍDA (compila: BUILD SUCCESS)
+- [x] Persistência JPA: entidades JPA, Spring Data repos, mappers JPA↔domínio, adapters dos ports
+- [x] Controllers: `CollaboratorController`, `WorkSessionController`, `AuthController`
+- [x] Requests + Bean Validation (`@NotBlank`, `@Email`, `@Size`)
+- [x] Responses + presenters (DTO → view model)
+- [x] Global Exception Handler completo (DomainException.code → HTTP status, validação, 401, 500)
+- [x] Swagger/OpenAPI documentado (+ esquema Bearer JWT)
+- [x] JWT authentication (login admin/admin, filtro, entry point 401 JSON)
+- [x] Paginação ponta a ponta (`page`/`size` → `PageResponse`)
+
+> Endpoints:
+> - `POST /api/v1/auth/login` (público) → retorna token
+> - `GET/POST/PUT/DELETE /api/v1/collaborators` (autenticado)
+> - `POST /api/v1/collaborators/{id}/work-sessions/start|finish` + `GET .../work-sessions` (autenticado)
+> - Swagger UI: `http://localhost:8080/swagger-ui.html`
+> - Usuário padrão: **admin / admin**
+
+### VALIDAÇÃO DO BACKEND ✅ CONCLUÍDA (rodou de verdade em 2026-05-28)
+- [x] Docker Desktop rodando + Postgres (`postgres:16-alpine`) healthy via compose
+- [x] Backend subiu (`{"status":"UP"}`), Flyway migrou o schema
+- [x] Fluxo completo testado: login → criar/listar colaborador → iniciar/encerrar jornada → histórico
+- [x] Regras validadas (HTTP correto): e-mail duplicado=409, encerrar sem jornada=404, jornada dupla=409, sem token=401, validação=400
+- [x] Cálculo de horas funcionando (totalMinutes preenchido ao encerrar)
+
+> Como rodar de novo:
+> ```powershell
+> docker compose up -d                 # Postgres (já tem volume com dados)
+> cd backend
+> mvn -B clean package -DskipTests
+> $env:SPRING_PROFILES_ACTIVE="dev"; java -jar target\time-tracking.jar
+> # Swagger: http://localhost:8080/swagger-ui.html  (admin/admin)
+> ```
 
 ### ETAPA 4 — Frontend: camadas ⬜ PENDENTE
 - [ ] Rotas (go_router)
@@ -106,12 +134,27 @@ Sistema de Registro de Ponto (Time Tracking) full-stack enterprise.
 
 ---
 
-## ▶️ Próximo passo imediato
-**ETAPA 3** (em andamento) — adapters de entrada/saída do backend:
-1. Persistência JPA (entidades JPA, Spring Data repositories, mappers, impl dos ports) → faz o app subir
-2. Controllers REST + requests (Bean Validation) + presenters/responses
-3. Global Exception Handler completo (mapeando `DomainException.code` → HTTP)
-4. JWT auth + Swagger documentado + paginação na API
+## ▶️ PONTO DE RETOMADA (pós-reboot do Docker)
+O usuário foi abrir o Docker Desktop e possivelmente reiniciar o PC. Ao voltar, fazer NESTA ordem:
+
+1. **Confirmar ferramentas** (no terminal do VS Code do usuário):
+   ```powershell
+   docker --version ; docker ps ; flutter --version
+   ```
+   - `docker ps` sem erro = Docker rodando. Se "cannot connect to the Docker daemon" → abrir Docker Desktop e esperar ficar verde.
+2. **Subir o Postgres + validar o backend** (o assistente pode rodar isso):
+   ```powershell
+   # na raiz do projeto
+   copy .env.example .env   # se ainda não existir
+   docker compose up -d
+   cd backend
+   mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
+   ```
+   Testar em http://localhost:8080/swagger-ui.html → login admin/admin → criar/listar colaborador.
+3. **Iniciar ETAPA 4** (frontend Flutter). Rodar no Chrome: `flutter run -d chrome`.
+
+> Estado do código: ETAPAS 1, 2 e 3 COMPLETAS e compilando (BUILD SUCCESS). Tudo commitado e no GitHub.
+> Falta: validar API rodando (passo 2) e então ETAPAS 4, 5, 6.
 
 ## 📝 Notas / pendências do usuário
 - Usuário faz os commits manualmente. **O assistente NUNCA commita** — apenas fornece os comandos.
