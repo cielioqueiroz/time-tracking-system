@@ -1,5 +1,7 @@
 # ⏱️ Enterprise Time Tracking System
 
+[![CI](https://github.com/cielioqueiroz/time-tracking-system/actions/workflows/ci.yml/badge.svg)](https://github.com/cielioqueiroz/time-tracking-system/actions/workflows/ci.yml)
+
 Sistema full-stack de **registro de ponto** com qualidade de produção: cadastro de
 colaboradores, controle de jornadas (iniciar / encerrar com cálculo automático de
 horas) e histórico paginado — construído sobre **Arquitetura Hexagonal + Clean
@@ -16,8 +18,8 @@ tratamento de erros consistente e uma camada de UI premium e responsiva.
 |--------|-------------|
 | **Backend** | Java 21 · Spring Boot 3.4 · Spring Data JPA · PostgreSQL 16 · Flyway · Spring Security + JWT (`jjwt`) · springdoc-openapi |
 | **Frontend** | Flutter · Dart · Riverpod · go_router · dio · google_fonts (Manrope + JetBrains Mono) · modelos imutáveis manuais (sem codegen) |
-| **Testes** | JUnit 5 · Mockito · AssertJ · H2 (backend) · `flutter_test` (frontend) |
-| **Infra** | Docker · Docker Compose |
+| **Testes** | JUnit 5 · Mockito · AssertJ · Testcontainers (PostgreSQL) · `flutter_test` (frontend) |
+| **Infra / CI** | Docker · Docker Compose · GitHub Actions |
 
 ---
 
@@ -178,19 +180,38 @@ Toda resposta usa um envelope previsível:
 ## 🧪 Testes
 
 ```bash
-# Backend (JUnit 5 + Mockito + AssertJ)
+# Backend — testes unitários (rápidos, sem Docker)
 cd backend && mvn test
+
+# Backend — unitários + integração (sobe um PostgreSQL real via Testcontainers)
+cd backend && mvn verify
 
 # Frontend (flutter_test)
 cd frontend && flutter analyze && flutter test
 ```
 
 Cobertura atual:
-- **Backend:** entidades, value objects e os 8 casos de uso (criação, atualização,
-  exclusão, consulta, listagem e início/encerramento/histórico de jornada),
-  incluindo os caminhos de erro de cada regra de negócio.
+- **Unitários (backend):** entidades, value objects e os 8 casos de uso (criação,
+  atualização, exclusão, consulta, listagem e início/encerramento/histórico de
+  jornada), incluindo os caminhos de erro de cada regra de negócio.
+- **Integração (backend):** fluxo HTTP ponta a ponta contra um PostgreSQL real
+  (Testcontainers) — login JWT, CRUD de colaborador, ciclo de jornada e os status
+  HTTP de cada regra (401/400/404/409). Exercita controllers + filtro JWT +
+  `GlobalExceptionHandler` + adapters JPA + migrations Flyway.
 - **Frontend:** serialização dos models, formatters de data/hora/duração, mapeamento
   de erros de rede (`DioException → Failure`) e widgets do Design System.
+
+> **Testcontainers exige Docker.** Os testes de integração (`*IT`) rodam apenas no
+> `mvn verify`; se nenhum ambiente Docker utilizável for encontrado, eles são
+> **pulados automaticamente** (nunca falham), então `mvn verify` permanece verde em
+> qualquer máquina. No **CI** (GitHub Actions, Docker disponível) eles rodam de fato.
+
+## 🔄 Integração contínua
+
+O workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda a cada push/PR
+na `main`:
+- **Backend:** `mvn verify` (unitários + integração com PostgreSQL real).
+- **Frontend:** `flutter analyze` + `flutter test`.
 
 ---
 
