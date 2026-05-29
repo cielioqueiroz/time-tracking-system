@@ -11,12 +11,9 @@ import '../../../../design_system/molecules/app_feedback.dart';
 import '../../../../design_system/tokens/app_spacing.dart';
 import '../../application/collaborators_controller.dart';
 
-/// Create/Edit collaborator form with inline validation and server-side field
-/// error mapping.
 class CollaboratorFormScreen extends ConsumerStatefulWidget {
   const CollaboratorFormScreen({super.key, this.collaboratorId});
 
-  /// Null = create mode; non-null = edit mode.
   final String? collaboratorId;
 
   bool get isEditing => collaboratorId != null;
@@ -44,7 +41,6 @@ class _CollaboratorFormScreenState extends ConsumerState<CollaboratorFormScreen>
     super.dispose();
   }
 
-  /// Prefill once, in edit mode, from the already-loaded list.
   void _prefillIfNeeded() {
     if (_prefilled || !widget.isEditing) return;
     final list = ref.read(collaboratorsControllerProvider).valueOrNull;

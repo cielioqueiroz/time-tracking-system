@@ -15,14 +15,12 @@ final workSessionRepositoryProvider = Provider<WorkSessionRepository>(
   (ref) => WorkSessionRepositoryImpl(ref.watch(_workSessionDataSourceProvider)),
 );
 
-/// Paginated history of a collaborator's sessions, keyed by collaborator id.
 final workSessionHistoryProvider =
     FutureProvider.family<List<WorkSession>, String>(
   (ref, collaboratorId) =>
       ref.watch(workSessionRepositoryProvider).history(collaboratorId),
 );
 
-/// Aggregated work-hours summary of a collaborator, keyed by collaborator id.
 final workSummaryProvider = FutureProvider.family<WorkSummary, String>(
   (ref, collaboratorId) =>
       ref.watch(workSessionRepositoryProvider).summary(collaboratorId),

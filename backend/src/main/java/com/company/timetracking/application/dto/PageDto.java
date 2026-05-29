@@ -4,7 +4,6 @@ import com.company.timetracking.domain.repositories.Page;
 
 import java.util.List;
 
-/** Transport-friendly paginated payload, decoupled from the domain {@link Page}. */
 public record PageDto<T>(
         List<T> content,
         int page,

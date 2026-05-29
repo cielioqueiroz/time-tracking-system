@@ -6,7 +6,6 @@ import com.company.timetracking.domain.valueobjects.CollaboratorId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Deletes a collaborator (and, by FK cascade, their sessions). */
 @Service
 public class DeleteCollaboratorUseCase {
 

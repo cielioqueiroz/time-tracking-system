@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-/** Inbound payload to update a collaborator. */
 public record UpdateCollaboratorRequest(
 
         @Schema(example = "José Silva")

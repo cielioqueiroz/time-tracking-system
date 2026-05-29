@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../design_system/tokens/app_durations.dart';
 
-/// Subtle entrance animation: fades and slides up. Compose with an increasing
-/// [delay] per list item to get a staggered reveal on load.
 class FadeSlideIn extends StatefulWidget {
   const FadeSlideIn({
     super.key,

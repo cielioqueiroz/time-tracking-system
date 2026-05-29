@@ -12,7 +12,6 @@ import com.company.timetracking.domain.valueobjects.CollaboratorId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Returns the paginated work-session history of a collaborator (newest first). */
 @Service
 public class GetWorkSessionHistoryUseCase {
 

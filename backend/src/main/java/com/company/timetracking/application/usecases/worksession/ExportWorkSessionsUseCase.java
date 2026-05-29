@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/** Returns all of a collaborator's sessions (newest first) for CSV export. */
 @Service
 public class ExportWorkSessionsUseCase {
 

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Authentication endpoint — exchanges credentials for a JWT. */
 @RestController
 @RequestMapping("/api/v1/auth")
 @Tag(name = "Auth", description = "Autenticação e emissão de token JWT")

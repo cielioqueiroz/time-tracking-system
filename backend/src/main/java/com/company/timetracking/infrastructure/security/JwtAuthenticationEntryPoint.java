@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-/** Returns a standardized 401 JSON envelope instead of the default HTML page. */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 

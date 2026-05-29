@@ -4,11 +4,6 @@ import 'dart:typed_data';
 
 import 'package:web/web.dart' as web;
 
-/// Triggers a browser download of [content] as a file named [filename].
-///
-/// Web-only on purpose — the app targets Flutter web. Builds an in-memory blob
-/// and clicks a transient anchor, so no server round-trip beyond the data we
-/// already hold.
 void downloadTextFile(String content, String filename, {String mime = 'text/csv'}) {
   final Uint8List bytes = Uint8List.fromList(utf8.encode(content));
   final blob = web.Blob(

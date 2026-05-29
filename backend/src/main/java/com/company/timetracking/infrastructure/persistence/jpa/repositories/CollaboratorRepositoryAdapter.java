@@ -14,10 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-/**
- * Outbound adapter implementing the {@link CollaboratorRepository} port over
- * Spring Data JPA. Translates the domain pagination contract to/from Spring's.
- */
 @Component
 public class CollaboratorRepositoryAdapter implements CollaboratorRepository {
 
@@ -32,7 +28,6 @@ public class CollaboratorRepositoryAdapter implements CollaboratorRepository {
 
     @Override
     public Collaborator save(Collaborator collaborator) {
-        // Find-or-create keeps lifecycle timestamps intact on update.
         CollaboratorJpaEntity entity = jpa.findById(collaborator.id().value())
                 .orElseGet(() -> mapper.toJpa(collaborator));
         entity.setName(collaborator.name());

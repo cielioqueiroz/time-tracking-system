@@ -6,10 +6,6 @@ import '../tokens/app_typography.dart';
 import 'app_fonts.dart';
 import 'app_theme_extension.dart';
 
-/// Builds Material [ThemeData] for both brightness modes from design tokens.
-///
-/// This is the ONLY place tokens are translated into a Flutter theme; widgets
-/// never construct colors or text styles ad-hoc.
 abstract final class AppTheme {
   static ThemeData light() => _build(AppPalette.light);
   static ThemeData dark() => _build(AppPalette.dark);

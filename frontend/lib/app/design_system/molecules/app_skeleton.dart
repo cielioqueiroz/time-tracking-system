@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../foundations/app_theme_extension.dart';
 import '../tokens/app_radius.dart';
 
-/// Shimmering placeholder block used to compose loading skeletons.
 class AppSkeleton extends StatefulWidget {
   const AppSkeleton({
     super.key,

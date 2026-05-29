@@ -5,7 +5,6 @@ import com.company.timetracking.application.dto.PageDto;
 import java.util.List;
 import java.util.function.Function;
 
-/** Outbound paginated view model. */
 public record PageResponse<T>(
         List<T> content,
         int page,
@@ -13,7 +12,6 @@ public record PageResponse<T>(
         long totalElements,
         int totalPages
 ) {
-    /** Builds a response from an application {@link PageDto}, mapping each item. */
     public static <S, T> PageResponse<T> from(PageDto<S> dto, Function<S, T> itemMapper) {
         return new PageResponse<>(
                 dto.content().stream().map(itemMapper).toList(),

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/theme_mode_controller.dart';
 import '../../design_system/foundations/app_theme_extension.dart';
 
-/// Compact icon button that toggles light/dark mode.
 class ThemeToggleButton extends ConsumerWidget {
   const ThemeToggleButton({super.key});
 

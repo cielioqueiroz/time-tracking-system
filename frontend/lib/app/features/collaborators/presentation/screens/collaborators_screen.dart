@@ -20,7 +20,6 @@ import '../../application/collaborators_controller.dart';
 import '../../domain/entities/collaborator.dart';
 import '../widgets/collaborator_card.dart';
 
-/// Main screen: lists collaborators with live status and journey actions.
 class CollaboratorsScreen extends ConsumerStatefulWidget {
   const CollaboratorsScreen({super.key});
 
@@ -181,7 +180,6 @@ class _CollaboratorsScreenState extends ConsumerState<CollaboratorsScreen> {
   }
 }
 
-/// Loading skeleton mimicking the collaborator cards.
 class _LoadingList extends StatelessWidget {
   const _LoadingList();
 

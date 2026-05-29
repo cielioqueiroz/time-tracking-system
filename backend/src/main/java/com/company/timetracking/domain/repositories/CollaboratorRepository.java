@@ -6,10 +6,6 @@ import com.company.timetracking.domain.valueobjects.Email;
 
 import java.util.Optional;
 
-/**
- * Outbound port for collaborator persistence. Implemented by an adapter in the
- * infrastructure layer (Dependency Inversion).
- */
 public interface CollaboratorRepository {
 
     Collaborator save(Collaborator collaborator);

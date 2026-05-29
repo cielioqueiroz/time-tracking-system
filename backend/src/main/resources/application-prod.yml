@@ -1,6 +1,3 @@
-# ─────────────────────────────────────────────────────────────────────────
-#  PROD profile — all sensitive values injected via environment variables.
-# ─────────────────────────────────────────────────────────────────────────
 spring:
   datasource:
     url: ${DB_URL}

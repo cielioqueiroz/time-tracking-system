@@ -4,10 +4,6 @@ import com.company.timetracking.application.dto.WorkSessionDto;
 
 import java.util.List;
 
-/**
- * Renders work sessions as RFC-4180-ish CSV (semicolon-separated, fields quoted
- * and escaped) — semicolon plays nicer with spreadsheets in pt-BR locales.
- */
 public final class WorkSessionCsvWriter {
 
     private static final String SEP = ";";

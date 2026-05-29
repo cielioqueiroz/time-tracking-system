@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Semantic color palette for a single theme (light or dark).
-///
-/// Widgets reference *roles* (e.g. [surface], [accent], [danger]) rather than
-/// raw hex values, so switching themes never touches widget code.
 @immutable
 class AppPalette {
   const AppPalette({
@@ -40,7 +36,6 @@ class AppPalette {
   final Color info;
   final Brightness brightness;
 
-  /// Light theme — clean, airy, Stripe/Linear-inspired neutrals.
   static const AppPalette light = AppPalette(
     background: Color(0xFFF8F9FB),
     surface: Color(0xFFFFFFFF),
@@ -59,7 +54,6 @@ class AppPalette {
     brightness: Brightness.light,
   );
 
-  /// Dark theme — deep neutral surfaces with the same accent identity.
   static const AppPalette dark = AppPalette(
     background: Color(0xFF0B0D11),
     surface: Color(0xFF14171D),

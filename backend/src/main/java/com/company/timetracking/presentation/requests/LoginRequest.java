@@ -3,7 +3,6 @@ package com.company.timetracking.presentation.requests;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
-/** Inbound credentials for authentication. */
 public record LoginRequest(
 
         @Schema(example = "admin")

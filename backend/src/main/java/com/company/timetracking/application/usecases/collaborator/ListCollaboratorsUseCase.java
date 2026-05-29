@@ -9,7 +9,6 @@ import com.company.timetracking.domain.repositories.PageQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Lists collaborators with pagination. */
 @Service
 public class ListCollaboratorsUseCase {
 

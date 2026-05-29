@@ -1,4 +1,3 @@
-/// Lifecycle state of a work session (mirrors the backend enum).
 enum WorkSessionStatus {
   emAndamento,
   finalizada;
@@ -11,7 +10,6 @@ enum WorkSessionStatus {
   bool get isOpen => this == WorkSessionStatus.emAndamento;
 }
 
-/// Domain entity for a single journey. Pure Dart, immutable.
 class WorkSession {
   const WorkSession({
     required this.id,

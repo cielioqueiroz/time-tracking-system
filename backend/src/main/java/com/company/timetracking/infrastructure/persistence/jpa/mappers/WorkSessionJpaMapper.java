@@ -7,7 +7,6 @@ import com.company.timetracking.domain.valueobjects.WorkSessionId;
 import com.company.timetracking.infrastructure.persistence.jpa.entities.WorkSessionJpaEntity;
 import org.springframework.stereotype.Component;
 
-/** Translates between the domain {@link WorkSession} and its JPA entity. */
 @Component
 public class WorkSessionJpaMapper {
 

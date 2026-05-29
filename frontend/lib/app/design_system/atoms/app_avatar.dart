@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../tokens/app_typography.dart';
 
-/// Circular initials avatar with a deterministic color derived from the name,
-/// so each collaborator gets a stable, distinct tone.
 class AppAvatar extends StatelessWidget {
   const AppAvatar({super.key, required this.name, this.size = 40});
 

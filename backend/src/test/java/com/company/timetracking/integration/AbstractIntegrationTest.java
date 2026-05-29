@@ -22,31 +22,10 @@ import java.util.Map;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-/**
- * Base for HTTP integration tests. Boots the whole Spring context against a real
- * PostgreSQL (Testcontainers) on a random port, exercising the full wiring:
- * controllers → use cases → JPA adapters → Flyway-migrated schema, plus the JWT
- * filter and {@code GlobalExceptionHandler}.
- *
- * <p><b>Singleton container:</b> a single PostgreSQL is started once and shared by
- * every IT class (it lives for the whole JVM and is torn down by Ryuk at exit).
- * This is intentional — Spring caches and reuses the test context across IT
- * classes, so a per-class container (started/stopped each class) would leave the
- * cached datasource pointing at a stopped container on the second class.
- *
- * <p>With {@code @Testcontainers(disabledWithoutDocker = true)} the whole suite is
- * <em>skipped</em> (never failed) when no usable Docker environment exists — so
- * {@code mvn verify} stays green on any machine, and the tests still run in CI
- * where Docker is available. Each test starts from a clean database.
- */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers(disabledWithoutDocker = true)
 abstract class AbstractIntegrationTest {
 
-    // Not annotated with @Container on purpose: we manage a single shared
-    // instance instead of one per class. Started lazily in the static block,
-    // which only runs once Docker is confirmed available (class isn't initialized
-    // when the disabledWithoutDocker condition skips the suite).
     static final PostgreSQLContainer<?> POSTGRES =
             new PostgreSQLContainer<>("postgres:16-alpine");
 
@@ -72,12 +51,9 @@ abstract class AbstractIntegrationTest {
 
     @BeforeEach
     void cleanDatabase() {
-        // Sessions first — they reference collaborators (FK).
         workSessionRepo.deleteAll();
         collaboratorRepo.deleteAll();
     }
-
-    // ───────────────────────── helpers ─────────────────────────
 
     protected String loginAndGetToken(String username, String password) {
         var entity = new HttpEntity<>(Map.of("username", username, "password", password), jsonHeaders());

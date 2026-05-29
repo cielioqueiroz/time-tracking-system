@@ -1,6 +1,5 @@
 import '../../domain/entities/work_summary.dart';
 
-/// Maps the work-summary JSON payload to the domain [WorkSummary].
 abstract final class WorkSummaryModel {
   static WorkSummary fromJson(Map<String, dynamic> json) {
     return WorkSummary(

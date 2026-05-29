@@ -12,7 +12,6 @@ import com.company.timetracking.domain.valueobjects.Email;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Updates a collaborator's name/email, keeping email unique across others. */
 @Service
 public class UpdateCollaboratorUseCase {
 

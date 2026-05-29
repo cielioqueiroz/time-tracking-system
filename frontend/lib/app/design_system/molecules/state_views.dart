@@ -6,8 +6,6 @@ import '../tokens/app_radius.dart';
 import '../tokens/app_spacing.dart';
 import '../tokens/app_typography.dart';
 
-/// Elegant empty state: soft icon medallion, title, supporting text, optional
-/// primary action.
 class EmptyStateView extends StatelessWidget {
   const EmptyStateView({
     super.key,
@@ -65,7 +63,6 @@ class EmptyStateView extends StatelessWidget {
   }
 }
 
-/// Error state with a retry affordance.
 class ErrorStateView extends StatelessWidget {
   const ErrorStateView({super.key, required this.message, this.onRetry});
 

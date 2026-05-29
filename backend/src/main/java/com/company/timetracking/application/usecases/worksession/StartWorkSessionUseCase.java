@@ -15,16 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 
-/**
- * Starts a journey for a collaborator.
- *
- * <p>Business rules enforced:
- * <ul>
- *   <li>collaborator must exist;</li>
- *   <li>no two simultaneous journeys — fails if one is already open;</li>
- *   <li>collaborator status flips to {@code TRABALHANDO} automatically.</li>
- * </ul>
- */
 @Service
 public class StartWorkSessionUseCase {
 

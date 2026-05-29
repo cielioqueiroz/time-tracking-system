@@ -1,4 +1,3 @@
-/// Working status of a collaborator (mirrors the backend enum).
 enum CollaboratorStatus {
   trabalhando,
   foraDaJornada;
@@ -11,7 +10,6 @@ enum CollaboratorStatus {
   bool get isWorking => this == CollaboratorStatus.trabalhando;
 }
 
-/// Domain entity representing a collaborator. Pure Dart, immutable.
 class Collaborator {
   const Collaborator({
     required this.id,

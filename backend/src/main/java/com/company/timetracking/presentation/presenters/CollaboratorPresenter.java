@@ -6,7 +6,6 @@ import com.company.timetracking.presentation.responses.CollaboratorResponse;
 import com.company.timetracking.presentation.responses.PageResponse;
 import org.springframework.stereotype.Component;
 
-/** Maps collaborator application DTOs to outbound view models. */
 @Component
 public class CollaboratorPresenter {
 

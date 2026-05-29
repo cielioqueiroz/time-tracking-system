@@ -6,8 +6,6 @@ import '../features/collaborators/presentation/screens/collaborators_screen.dart
 import '../features/work_sessions/presentation/screens/work_session_history_screen.dart';
 import 'app_routes.dart';
 
-/// Application router. Kept declarative and free of business logic; screens
-/// pull their own state from providers.
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.collaborators,

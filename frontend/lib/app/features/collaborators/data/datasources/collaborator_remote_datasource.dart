@@ -4,8 +4,6 @@ import '../../../../core/constants/api_constants.dart';
 import '../../domain/entities/collaborator.dart';
 import '../models/collaborator_model.dart';
 
-/// The only place collaborator HTTP calls are made. Returns domain entities;
-/// the envelope unwrapping lives here.
 class CollaboratorRemoteDataSource {
   CollaboratorRemoteDataSource(this._dio);
 

@@ -1,9 +1,5 @@
 package com.company.timetracking.domain.repositories;
 
-/**
- * Framework-agnostic pagination request used by repository ports, so the
- * domain never depends on Spring's {@code Pageable}.
- */
 public record PageQuery(int page, int size) {
 
     public static final int DEFAULT_SIZE = 20;

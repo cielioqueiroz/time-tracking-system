@@ -10,8 +10,6 @@ enum AppButtonVariant { primary, secondary, ghost, danger }
 
 enum AppButtonSize { sm, md }
 
-/// The single button used across the product. Variants + loading state, with a
-/// gentle hover/press feedback. No business logic.
 class AppButton extends StatefulWidget {
   const AppButton({
     super.key,

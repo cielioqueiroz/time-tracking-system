@@ -9,7 +9,6 @@ import '../../../../design_system/tokens/app_spacing.dart';
 import '../../../../design_system/tokens/app_typography.dart';
 import '../../domain/entities/collaborator.dart';
 
-/// Rich collaborator row: identity + live status + journey/edit/delete actions.
 class CollaboratorCard extends StatelessWidget {
   const CollaboratorCard({
     super.key,

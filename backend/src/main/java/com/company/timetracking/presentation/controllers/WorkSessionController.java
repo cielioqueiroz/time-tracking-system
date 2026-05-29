@@ -31,9 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
 
-/**
- * REST endpoints for a collaborator's work sessions (journeys).
- */
 @RestController
 @RequestMapping("/api/v1/collaborators/{collaboratorId}/work-sessions")
 @Tag(name = "Work Sessions", description = "Início, encerramento e histórico de jornadas")

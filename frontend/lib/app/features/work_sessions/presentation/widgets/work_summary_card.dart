@@ -10,8 +10,6 @@ import '../../../../design_system/tokens/app_spacing.dart';
 import '../../../../design_system/tokens/app_typography.dart';
 import '../../application/work_session_providers.dart';
 
-/// Header card with the collaborator's aggregated work-hours stats.
-/// Has its own loading/error handling so it never blocks the timeline.
 class WorkSummaryCard extends ConsumerWidget {
   const WorkSummaryCard({super.key, required this.collaboratorId});
 
@@ -26,7 +24,6 @@ class WorkSummaryCard extends ConsumerWidget {
         padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
         child: AppSkeleton(height: 92, radius: BorderRadius.all(Radius.circular(16))),
       ),
-      // Silent on error: the timeline below already surfaces failures.
       error: (_, __) => const SizedBox.shrink(),
       data: (s) {
         final palette = context.palette;

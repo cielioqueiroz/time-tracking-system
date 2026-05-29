@@ -5,8 +5,6 @@ import 'package:time_tracking/app/design_system/atoms/status_badge.dart';
 import 'package:time_tracking/app/design_system/foundations/app_theme_extension.dart';
 import 'package:time_tracking/app/design_system/tokens/app_colors.dart';
 
-/// Wraps a widget with the minimum theme context the design system needs
-/// (the [AppThemeExt] palette), without touching network fonts.
 Widget _harness(Widget child) => MaterialApp(
       theme: ThemeData(extensions: const [AppThemeExt(palette: AppPalette.light)]),
       home: Scaffold(body: Center(child: child)),

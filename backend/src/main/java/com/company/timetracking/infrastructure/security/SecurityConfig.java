@@ -13,12 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-/**
- * Stateless JWT security.
- *
- * <p>Public: authentication, Swagger UI/OpenAPI docs and the health endpoint.
- * Everything else requires a valid Bearer token.
- */
 @Configuration
 @EnableConfigurationProperties(SecurityProperties.class)
 public class SecurityConfig {

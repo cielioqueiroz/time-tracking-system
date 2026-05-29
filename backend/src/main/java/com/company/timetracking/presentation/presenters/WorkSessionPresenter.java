@@ -8,7 +8,6 @@ import com.company.timetracking.presentation.responses.WorkSessionResponse;
 import com.company.timetracking.presentation.responses.WorkSummaryResponse;
 import org.springframework.stereotype.Component;
 
-/** Maps work-session application DTOs to outbound view models. */
 @Component
 public class WorkSessionPresenter {
 

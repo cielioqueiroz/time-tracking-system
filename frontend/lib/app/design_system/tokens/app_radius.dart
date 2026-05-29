@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 
-/// Corner-radius scale. Use [BorderRadius] helpers to avoid repetition.
 abstract final class AppRadius {
   static const double xs = 4;
   static const double sm = 8;

@@ -12,10 +12,6 @@ import java.util.UUID;
 
 import com.company.timetracking.domain.enums.CollaboratorStatus;
 
-/**
- * JPA persistence model for a collaborator. Intentionally separate from the
- * domain {@code Collaborator} so persistence concerns never leak into the core.
- */
 @Entity
 @Table(name = "collaborators")
 public class CollaboratorJpaEntity {
@@ -44,7 +40,6 @@ public class CollaboratorJpaEntity {
     private Instant updatedAt;
 
     protected CollaboratorJpaEntity() {
-        // required by JPA
     }
 
     public CollaboratorJpaEntity(UUID id, String name, String email, String cargo,

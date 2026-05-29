@@ -2,10 +2,6 @@ import 'package:dio/dio.dart';
 
 import '../errors/failure.dart';
 
-/// Translates low-level transport errors into domain-friendly [Failure]s.
-///
-/// Centralized so every repository maps errors identically and the
-/// presentation layer never sees a [DioException].
 Failure mapError(Object error) {
   if (error is! DioException) {
     return const UnknownFailure();
@@ -41,8 +37,6 @@ Failure _mapResponse(Response<dynamic>? response) {
   };
 }
 
-/// Reads the first error message from the standardized API envelope:
-/// `{ success, data, errors: [{ code, message, field }] }`.
 String? _extractMessage(dynamic data) {
   if (data is Map && data['errors'] is List && (data['errors'] as List).isNotEmpty) {
     final first = (data['errors'] as List).first;

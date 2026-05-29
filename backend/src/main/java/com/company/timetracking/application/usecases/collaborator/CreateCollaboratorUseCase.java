@@ -10,7 +10,6 @@ import com.company.timetracking.domain.valueobjects.Email;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Creates a new collaborator, enforcing email uniqueness. */
 @Service
 public class CreateCollaboratorUseCase {
 

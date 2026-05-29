@@ -219,13 +219,20 @@ Base: `/api/v1`
 | `GET`  | `/collaborators?page=&size=` | ✅ | Lista colaboradores (paginado) |
 | `POST` | `/collaborators` | ✅ | Cria colaborador |
 | `GET`  | `/collaborators/{id}` | ✅ | Busca por id |
-| `PUT`  | `/collaborators/{id}` | ✅ | Atualiza nome/e-mail |
+| `PUT`  | `/collaborators/{id}` | ✅ | Atualiza nome, e-mail e cargo |
 | `DELETE` | `/collaborators/{id}` | ✅ | Exclui colaborador (e suas jornadas) |
 | `POST` | `/collaborators/{id}/work-sessions/start` | ✅ | Inicia a jornada |
 | `POST` | `/collaborators/{id}/work-sessions/finish` | ✅ | Encerra a jornada em andamento |
 | `GET`  | `/collaborators/{id}/work-sessions?page=&size=` | ✅ | Histórico (mais recentes primeiro) |
 | `GET`  | `/collaborators/{id}/work-sessions/summary?from=&to=` | ✅ | Resumo de horas (período opcional) |
 | `GET`  | `/collaborators/{id}/work-sessions/export` | ✅ | Exporta as jornadas em CSV |
+
+### Exemplo de payload (criar/atualizar colaborador)
+```json
+{ "name": "José Silva", "email": "jose.silva@empresa.com", "cargo": "Desenvolvedor" }
+```
+Os três campos são obrigatórios. O e-mail é validado e precisa ser único
+(case-insensitive); o cargo aceita até 100 caracteres.
 
 ### Envelope de resposta
 ```jsonc

@@ -1,7 +1,5 @@
 import '../../domain/entities/collaborator.dart';
 
-/// Maps the collaborator JSON payload to/from the domain [Collaborator].
-/// Isolated here so the domain entity stays free of serialization concerns.
 abstract final class CollaboratorModel {
   static Collaborator fromJson(Map<String, dynamic> json) {
     return Collaborator(

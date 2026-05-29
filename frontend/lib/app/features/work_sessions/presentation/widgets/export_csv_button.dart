@@ -7,8 +7,6 @@ import '../../../../design_system/atoms/app_button.dart';
 import '../../../../design_system/molecules/app_feedback.dart';
 import '../../application/work_session_providers.dart';
 
-/// Top-bar action that exports a collaborator's sessions as a CSV download.
-/// Manages its own loading state so the screen stays a simple consumer.
 class ExportCsvButton extends ConsumerStatefulWidget {
   const ExportCsvButton({super.key, required this.collaboratorId});
 

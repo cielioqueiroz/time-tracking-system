@@ -4,11 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/api_constants.dart';
 import '../services/auth_session_controller.dart';
 
-/// Provides a configured [Dio] instance.
-///
-/// A single interceptor attaches the Bearer token (when present) to every
-/// request. Error handling lives in the repositories via `mapError`, keeping
-/// this provider focused on transport configuration only.
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(

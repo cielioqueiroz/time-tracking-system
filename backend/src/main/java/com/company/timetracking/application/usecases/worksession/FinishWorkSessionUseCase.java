@@ -15,17 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 
-/**
- * Finishes the open journey of a collaborator.
- *
- * <p>Business rules enforced:
- * <ul>
- *   <li>collaborator must exist;</li>
- *   <li>cannot finish a non-existent/open journey — fails if none is open;</li>
- *   <li>worked minutes are computed automatically;</li>
- *   <li>collaborator status flips to {@code FORA_DA_JORNADA} automatically.</li>
- * </ul>
- */
 @Service
 public class FinishWorkSessionUseCase {
 

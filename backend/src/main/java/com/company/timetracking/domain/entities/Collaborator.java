@@ -7,13 +7,6 @@ import com.company.timetracking.domain.valueobjects.Email;
 
 import java.util.Objects;
 
-/**
- * Collaborator aggregate root.
- *
- * <p>Encapsulates its own invariants (name and cargo required, valid email) and
- * the transitions of its working status. State is never mutated from the outside
- * except through these intention-revealing methods.
- */
 public class Collaborator {
 
     private static final int NAME_MAX = 150;
@@ -34,13 +27,11 @@ public class Collaborator {
         changeCargo(cargo);
     }
 
-    /** Creates a brand-new collaborator, off-duty by default. */
     public static Collaborator create(String name, Email email, String cargo) {
         return new Collaborator(CollaboratorId.generate(), name, email, cargo,
                 CollaboratorStatus.FORA_DA_JORNADA);
     }
 
-    /** Reconstructs an existing collaborator (e.g. from persistence). */
     public static Collaborator restore(CollaboratorId id, String name, Email email, String cargo,
                                        CollaboratorStatus status) {
         return new Collaborator(id, name, email, cargo, status);
@@ -74,12 +65,10 @@ public class Collaborator {
         this.email = Objects.requireNonNull(newEmail, "email");
     }
 
-    /** Marks the collaborator as working (called when a session starts). */
     public void markWorking() {
         this.status = CollaboratorStatus.TRABALHANDO;
     }
 
-    /** Marks the collaborator as off-duty (called when a session ends). */
     public void markOffDuty() {
         this.status = CollaboratorStatus.FORA_DA_JORNADA;
     }
@@ -96,7 +85,6 @@ public class Collaborator {
         return email;
     }
 
-    /** Job title of the collaborator (e.g. "Desenvolvedor"). */
     public String cargo() {
         return cargo;
     }

@@ -9,12 +9,6 @@ import com.company.timetracking.domain.valueobjects.WorkSessionId;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * WorkSession aggregate root — a single journey of a collaborator.
- *
- * <p>Owns the rules: a session starts open ({@code EM_ANDAMENTO}); finishing it
- * computes the worked time and is idempotency-guarded (cannot finish twice).
- */
 public class WorkSession {
 
     private final WorkSessionId id;
@@ -30,19 +24,16 @@ public class WorkSession {
         this.period = Objects.requireNonNull(period, "period");
     }
 
-    /** Starts a new, open session for a collaborator at {@code now}. */
     public static WorkSession start(CollaboratorId collaboratorId, Instant now) {
         return new WorkSession(WorkSessionId.generate(), collaboratorId,
                 WorkSessionStatus.EM_ANDAMENTO, WorkPeriod.startingAt(now));
     }
 
-    /** Reconstructs an existing session (e.g. from persistence). */
     public static WorkSession restore(WorkSessionId id, CollaboratorId collaboratorId,
                                       WorkSessionStatus status, WorkPeriod period) {
         return new WorkSession(id, collaboratorId, status, period);
     }
 
-    /** Finishes the session at {@code now}, deriving worked minutes. */
     public void finish(Instant now) {
         if (status == WorkSessionStatus.FINALIZADA) {
             throw new WorkSessionAlreadyFinishedException(id.toString());

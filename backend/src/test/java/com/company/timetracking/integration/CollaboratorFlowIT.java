@@ -9,10 +9,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Full collaborator + work-session lifecycle over real HTTP and a real database,
- * plus the business-rule error paths and their HTTP statuses.
- */
 class CollaboratorFlowIT extends AbstractIntegrationTest {
 
     private static final String COLLABORATORS = "/api/v1/collaborators";
@@ -28,7 +24,6 @@ class CollaboratorFlowIT extends AbstractIntegrationTest {
     void fullLifecycle_create_start_finish_history_update_delete() {
         String token = adminToken();
 
-        // create
         var createResp = send(HttpMethod.POST, COLLABORATORS, token,
                 Map.of("name", "Ana Souza", "email", "ana@empresa.com", "cargo", "Analista"));
         assertThat(createResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -38,31 +33,26 @@ class CollaboratorFlowIT extends AbstractIntegrationTest {
         assertThat(created.path("cargo").asText()).isEqualTo("Analista");
         assertThat(created.path("status").asText()).isEqualTo("FORA_DA_JORNADA");
 
-        // get
         var getResp = send(HttpMethod.GET, COLLABORATORS + "/" + id, token, null);
         assertThat(getResp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(readTree(getResp.getBody()).path("data").path("email").asText())
                 .isEqualTo("ana@empresa.com");
 
-        // list contains it
         var listResp = send(HttpMethod.GET, COLLABORATORS, token, null);
         assertThat(listResp.getStatusCode()).isEqualTo(HttpStatus.OK);
         var listData = readTree(listResp.getBody()).path("data");
         assertThat(listData.path("totalElements").asLong()).isEqualTo(1L);
         assertThat(listData.path("content").get(0).path("id").asText()).isEqualTo(id);
 
-        // start journey
         var startResp = send(HttpMethod.POST, COLLABORATORS + "/" + id + "/work-sessions/start", token, null);
         assertThat(startResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(readTree(startResp.getBody()).path("data").path("status").asText())
                 .isEqualTo("EM_ANDAMENTO");
 
-        // collaborator now working
         var afterStart = send(HttpMethod.GET, COLLABORATORS + "/" + id, token, null);
         assertThat(readTree(afterStart.getBody()).path("data").path("status").asText())
                 .isEqualTo("TRABALHANDO");
 
-        // finish journey
         var finishResp = send(HttpMethod.POST, COLLABORATORS + "/" + id + "/work-sessions/finish", token, null);
         assertThat(finishResp.getStatusCode()).isEqualTo(HttpStatus.OK);
         var finished = readTree(finishResp.getBody()).path("data");
@@ -70,18 +60,15 @@ class CollaboratorFlowIT extends AbstractIntegrationTest {
         assertThat(finished.path("totalMinutes").isNull()).isFalse();
         assertThat(finished.path("totalMinutes").asLong()).isGreaterThanOrEqualTo(0L);
 
-        // collaborator back off-duty
         var afterFinish = send(HttpMethod.GET, COLLABORATORS + "/" + id, token, null);
         assertThat(readTree(afterFinish.getBody()).path("data").path("status").asText())
                 .isEqualTo("FORA_DA_JORNADA");
 
-        // history has one finished session
         var historyResp = send(HttpMethod.GET, COLLABORATORS + "/" + id + "/work-sessions", token, null);
         assertThat(historyResp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(readTree(historyResp.getBody()).path("data").path("totalElements").asLong())
                 .isEqualTo(1L);
 
-        // update
         var updateResp = send(HttpMethod.PUT, COLLABORATORS + "/" + id, token,
                 Map.of("name", "Ana Lima", "email", "ana.lima@empresa.com", "cargo", "Tech Lead"));
         assertThat(updateResp.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -89,11 +76,9 @@ class CollaboratorFlowIT extends AbstractIntegrationTest {
         assertThat(updated.path("name").asText()).isEqualTo("Ana Lima");
         assertThat(updated.path("cargo").asText()).isEqualTo("Tech Lead");
 
-        // delete
         var deleteResp = send(HttpMethod.DELETE, COLLABORATORS + "/" + id, token, null);
         assertThat(deleteResp.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        // gone
         var goneResp = send(HttpMethod.GET, COLLABORATORS + "/" + id, token, null);
         assertThat(goneResp.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }

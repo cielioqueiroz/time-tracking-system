@@ -5,8 +5,6 @@ import '../tokens/app_durations.dart';
 import '../tokens/app_elevation.dart';
 import '../tokens/app_radius.dart';
 
-/// Surface container — the base building block for elevated content.
-/// Optionally interactive, with a subtle hover lift on pointer devices.
 class AppCard extends StatefulWidget {
   const AppCard({
     super.key,

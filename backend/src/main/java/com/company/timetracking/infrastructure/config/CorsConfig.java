@@ -10,11 +10,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * CORS policy for browser clients (the Flutter web app runs on an arbitrary
- * localhost port in dev). Allowed origin patterns are configurable so prod can
- * lock them down to the real frontend domain.
- */
 @Configuration
 public class CorsConfig {
 

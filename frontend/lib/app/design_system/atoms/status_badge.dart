@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../tokens/app_radius.dart';
 import '../tokens/app_typography.dart';
 
-/// A compact status pill: tinted background, colored dot (optionally pulsing)
-/// and a label. Purely presentational.
 class StatusBadge extends StatefulWidget {
   const StatusBadge({
     super.key,

@@ -4,9 +4,6 @@ import '../../collaborators/application/collaborators_controller.dart';
 import '../domain/repositories/work_session_repository.dart';
 import 'work_session_providers.dart';
 
-/// Coordinates journey actions. Starting/finishing a session changes the
-/// collaborator's status, so afterwards we refresh the collaborator list and
-/// the affected history. Errors propagate as `Failure` for UI feedback.
 class WorkSessionActions {
   WorkSessionActions(this._ref);
 

@@ -6,8 +6,6 @@ import 'design_system/foundations/app_theme.dart';
 import 'features/auth/application/auth_providers.dart';
 import 'routes/app_router.dart';
 
-/// Root application widget. Wires themes, the router, and gates the UI behind
-/// the session bootstrap (auth) so authenticated requests are guaranteed.
 class TimeTrackingApp extends ConsumerWidget {
   const TimeTrackingApp({super.key});
 
@@ -28,8 +26,6 @@ class TimeTrackingApp extends ConsumerWidget {
   }
 }
 
-/// Shows a splash while authenticating and an error+retry state on failure;
-/// otherwise renders the routed app.
 class _BootstrapGate extends ConsumerWidget {
   const _BootstrapGate({required this.child});
 

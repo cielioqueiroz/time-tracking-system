@@ -6,7 +6,6 @@ import '../../domain/entities/work_summary.dart';
 import '../models/work_session_model.dart';
 import '../models/work_summary_model.dart';
 
-/// The only place work-session HTTP calls are made.
 class WorkSessionRemoteDataSource {
   WorkSessionRemoteDataSource(this._dio);
 

@@ -1,11 +1,5 @@
-# ════════════════════════════════════════════════════════════════════════
-#  Local / containerized environment for the Time Tracking System.
-#  Usage:  docker compose up -d        (Postgres only, for local dev)
-#          docker compose --profile full up -d   (Postgres + backend)
-# ════════════════════════════════════════════════════════════════════════
 services:
 
-  # ───────────────────────────── PostgreSQL ─────────────────────────────
   postgres:
     image: postgres:16-alpine
     container_name: timetracking-postgres
@@ -24,7 +18,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # ───────────────────────────── Backend API ────────────────────────────
   backend:
     build:
       context: ./backend

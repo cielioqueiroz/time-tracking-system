@@ -5,15 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Instant;
 import java.util.List;
 
-/**
- * Standardized response envelope returned by every endpoint.
- *
- * <p>Keeps the wire format predictable for clients: a successful call always
- * carries {@code data} and no {@code errors}; a failed call carries
- * {@code errors} and no {@code data}.
- *
- * @param <T> payload type
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ApiResponse<T>(
         boolean success,

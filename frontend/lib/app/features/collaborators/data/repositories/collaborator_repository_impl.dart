@@ -3,8 +3,6 @@ import '../../domain/entities/collaborator.dart';
 import '../../domain/repositories/collaborator_repository.dart';
 import '../datasources/collaborator_remote_datasource.dart';
 
-/// Implements the domain repository over the remote data source, translating
-/// any transport error into a domain `Failure`.
 class CollaboratorRepositoryImpl implements CollaboratorRepository {
   CollaboratorRepositoryImpl(this._remote);
 

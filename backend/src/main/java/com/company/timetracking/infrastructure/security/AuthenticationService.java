@@ -3,10 +3,6 @@ package com.company.timetracking.infrastructure.security;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
-/**
- * Simple credential check against the configured bootstrap admin user,
- * issuing a JWT on success. Kept intentionally minimal (single user) per scope.
- */
 @Service
 public class AuthenticationService {
 

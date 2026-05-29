@@ -9,7 +9,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** End-to-end authentication and route-protection behavior. */
 class AuthIT extends AbstractIntegrationTest {
 
     @Test

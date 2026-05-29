@@ -4,7 +4,6 @@ import '../../domain/entities/work_summary.dart';
 import '../../domain/repositories/work_session_repository.dart';
 import '../datasources/work_session_remote_datasource.dart';
 
-/// Implements the domain repository over the remote data source.
 class WorkSessionRepositoryImpl implements WorkSessionRepository {
   WorkSessionRepositoryImpl(this._remote);
 

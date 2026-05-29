@@ -23,7 +23,6 @@ void main() {
 
   group('Formatters date/time', () {
     test('date renders day, abbreviated month and year (local)', () {
-      // Build from a local DateTime to avoid timezone drift in the assertion.
       final d = DateTime(2026, 5, 28, 14, 30);
       expect(Formatters.date(d), '28 mai 2026');
     });

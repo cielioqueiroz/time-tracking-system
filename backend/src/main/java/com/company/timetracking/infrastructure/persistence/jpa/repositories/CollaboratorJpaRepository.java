@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;
 
-/** Spring Data repository for {@link CollaboratorJpaEntity}. */
 public interface CollaboratorJpaRepository extends JpaRepository<CollaboratorJpaEntity, UUID> {
 
     Optional<CollaboratorJpaEntity> findByEmailIgnoreCase(String email);

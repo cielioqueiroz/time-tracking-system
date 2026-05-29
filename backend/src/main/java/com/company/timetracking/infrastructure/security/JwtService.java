@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 
-/** Issues and validates JWT access tokens (HMAC-SHA256). */
 @Service
 public class JwtService {
 
@@ -33,7 +32,6 @@ public class JwtService {
                 .compact();
     }
 
-    /** Returns the subject if the token is valid; throws otherwise. */
     public String extractSubject(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(key)

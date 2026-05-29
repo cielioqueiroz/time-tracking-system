@@ -14,11 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/**
- * Validates the {@code Authorization: Bearer <token>} header and, when valid,
- * populates the security context. Invalid/absent tokens are simply ignored —
- * authorization rules in {@code SecurityConfig} decide what is allowed.
- */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -48,7 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception ignored) {
-                // Invalid token → leave context unauthenticated.
                 SecurityContextHolder.clearContext();
             }
         }

@@ -1,4 +1,3 @@
-/// Aggregated work-hours statistics for a collaborator. Pure Dart, immutable.
 class WorkSummary {
   const WorkSummary({
     required this.totalSessions,

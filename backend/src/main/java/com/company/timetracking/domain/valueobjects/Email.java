@@ -4,10 +4,6 @@ import com.company.timetracking.domain.exceptions.InvalidEmailException;
 
 import java.util.regex.Pattern;
 
-/**
- * Immutable, self-validating email value object. Stored normalized
- * (trimmed + lower-cased) so equality and uniqueness are case-insensitive.
- */
 public record Email(String value) {
 
     private static final Pattern PATTERN =

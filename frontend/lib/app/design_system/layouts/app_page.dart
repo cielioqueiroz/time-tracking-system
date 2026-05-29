@@ -4,9 +4,6 @@ import '../foundations/app_theme_extension.dart';
 import '../tokens/app_spacing.dart';
 import '../tokens/app_typography.dart';
 
-/// Page shell: a slim top bar (title/subtitle + actions, optional back) and a
-/// content area centered with a max width — gives the app a calm, focused
-/// SaaS layout that scales from mobile to wide screens.
 class AppPage extends StatelessWidget {
   const AppPage({
     super.key,

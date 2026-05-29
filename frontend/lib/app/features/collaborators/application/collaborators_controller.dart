@@ -4,11 +4,6 @@ import '../domain/entities/collaborator.dart';
 import '../domain/repositories/collaborator_repository.dart';
 import 'collaborator_providers.dart';
 
-/// State controller for the collaborator list.
-///
-/// Holds the async list state; mutations delegate to the repository then
-/// refresh. Errors are rethrown as `Failure` so the UI can present feedback
-/// while the list state stays intact.
 class CollaboratorsController extends AsyncNotifier<List<Collaborator>> {
   CollaboratorRepository get _repo => ref.read(collaboratorRepositoryProvider);
 

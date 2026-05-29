@@ -29,10 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST endpoints for collaborators. Thin layer: validates input, delegates to
- * use cases, presents results in the standardized envelope.
- */
 @RestController
 @RequestMapping("/api/v1/collaborators")
 @Tag(name = "Collaborators", description = "Cadastro e consulta de colaboradores")

@@ -8,7 +8,6 @@ import com.company.timetracking.domain.valueobjects.CollaboratorId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Fetches a single collaborator by id. */
 @Service
 public class GetCollaboratorUseCase {
 

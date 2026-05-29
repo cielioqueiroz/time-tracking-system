@@ -4,7 +4,6 @@ import com.company.timetracking.application.dto.WorkSessionDto;
 import com.company.timetracking.domain.entities.WorkSession;
 import org.springframework.stereotype.Component;
 
-/** Maps the {@link WorkSession} aggregate to its application read model. */
 @Component
 public class WorkSessionDtoMapper {
 

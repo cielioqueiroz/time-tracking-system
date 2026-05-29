@@ -6,7 +6,6 @@ import '../tokens/app_radius.dart';
 import '../tokens/app_spacing.dart';
 import '../tokens/app_typography.dart';
 
-/// Labeled text input with inline error messaging and focus highlight.
 class AppTextField extends StatefulWidget {
   const AppTextField({
     super.key,

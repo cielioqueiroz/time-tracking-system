@@ -14,11 +14,6 @@ final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepositoryImpl(ref.watch(_authDataSourceProvider)),
 );
 
-/// Bootstraps a session at app start.
-///
-/// The scope has a single admin user and no login screen, so we authenticate
-/// with the default credentials and store the token. Swapping this for a real
-/// login screen later only touches this provider + a screen.
 final sessionBootstrapProvider = FutureProvider<void>((ref) async {
   final repository = ref.watch(authRepositoryProvider);
   final token = await repository.login(username: 'admin', password: 'admin');

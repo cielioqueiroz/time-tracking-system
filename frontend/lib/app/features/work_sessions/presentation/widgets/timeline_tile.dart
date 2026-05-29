@@ -9,8 +9,6 @@ import '../../../../design_system/tokens/app_spacing.dart';
 import '../../../../design_system/tokens/app_typography.dart';
 import '../../domain/entities/work_session.dart';
 
-/// A single entry in the session history timeline: a connecting rail with a
-/// status dot beside a content card (date, start→end, duration).
 class TimelineTile extends StatelessWidget {
   const TimelineTile({
     super.key,

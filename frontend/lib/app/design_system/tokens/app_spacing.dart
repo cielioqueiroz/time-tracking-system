@@ -1,7 +1,3 @@
-/// Spacing scale — a single source of truth for all gaps, paddings and margins.
-///
-/// Based on a 4pt grid. Never hard-code spacing in widgets; reference these
-/// tokens so rhythm stays consistent across the whole product.
 abstract final class AppSpacing {
   static const double none = 0;
   static const double xxs = 2;

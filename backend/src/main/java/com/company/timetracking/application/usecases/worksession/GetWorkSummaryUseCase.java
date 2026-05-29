@@ -10,7 +10,6 @@ import com.company.timetracking.domain.valueobjects.CollaboratorId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Returns aggregated work-hours statistics for a collaborator over an optional period. */
 @Service
 public class GetWorkSummaryUseCase {
 

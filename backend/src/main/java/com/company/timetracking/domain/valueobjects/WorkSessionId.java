@@ -2,7 +2,6 @@ package com.company.timetracking.domain.valueobjects;
 
 import java.util.UUID;
 
-/** Typed identifier for a {@code WorkSession}. */
 public record WorkSessionId(UUID value) {
 
     public WorkSessionId {

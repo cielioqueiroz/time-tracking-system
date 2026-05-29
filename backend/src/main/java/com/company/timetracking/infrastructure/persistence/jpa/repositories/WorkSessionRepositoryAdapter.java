@@ -18,7 +18,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-/** Outbound adapter implementing the {@link WorkSessionRepository} port. */
 @Component
 public class WorkSessionRepositoryAdapter implements WorkSessionRepository {
 
@@ -78,8 +77,6 @@ public class WorkSessionRepositoryAdapter implements WorkSessionRepository {
                 .stream().map(mapper::toDomain).toList();
     }
 
-    // Concrete bounds for an "open" period: no work session predates the epoch,
-    // and none reaches the year 9999 — so these act as "no lower/upper limit".
     private static final Instant MIN_BOUND = Instant.EPOCH;
     private static final Instant MAX_BOUND = Instant.parse("9999-12-31T23:59:59Z");
 

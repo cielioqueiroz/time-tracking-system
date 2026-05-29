@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Elevation / shadow tokens. Subtle, layered shadows for a premium feel
-/// (avoid heavy Material drop shadows).
 abstract final class AppElevation {
   static const List<BoxShadow> none = [];
 

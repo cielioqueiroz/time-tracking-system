@@ -20,14 +20,9 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.util.List;
 
-/**
- * Centralized translation of exceptions into the standardized
- * {@link ApiResponse} envelope, with a stable HTTP status per error class.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /** Domain/business-rule violations — status derived from the exception type. */
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ApiResponse<Void>> handleDomain(DomainException ex) {
         HttpStatus status = statusFor(ex);
@@ -35,7 +30,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.failure(ApiError.of(ex.code(), ex.getMessage())));
     }
 
-    /** Bean Validation failures on request bodies. */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidation(MethodArgumentNotValidException ex) {
         List<ApiError> errors = ex.getBindingResult().getFieldErrors().stream()
@@ -44,28 +38,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ApiResponse.failure(errors));
     }
 
-    /** Malformed/unreadable request body. */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleUnreadable(HttpMessageNotReadableException ex) {
         return ResponseEntity.badRequest().body(ApiResponse.failure(
                 ApiError.of("MALFORMED_REQUEST", "Corpo da requisição inválido.")));
     }
 
-    /** Bad path/query argument, e.g. an invalid UUID. */
     @ExceptionHandler({MethodArgumentTypeMismatchException.class, IllegalArgumentException.class})
     public ResponseEntity<ApiResponse<Void>> handleBadArgument(Exception ex) {
         return ResponseEntity.badRequest().body(ApiResponse.failure(
                 ApiError.of("INVALID_ARGUMENT", "Parâmetro inválido.")));
     }
 
-    /** Failed authentication. */
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse<Void>> handleBadCredentials(BadCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.failure(
                 ApiError.of("INVALID_CREDENTIALS", "Credenciais inválidas.")));
     }
 
-    /** Anything unmapped — never leak internals. */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleUnexpected(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.failure(

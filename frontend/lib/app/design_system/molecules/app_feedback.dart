@@ -6,7 +6,6 @@ import '../tokens/app_typography.dart';
 
 enum _FeedbackKind { success, error }
 
-/// Lightweight, themed snackbars for transient feedback.
 abstract final class AppFeedback {
   static void success(BuildContext context, String message) =>
       _show(context, message, _FeedbackKind.success);

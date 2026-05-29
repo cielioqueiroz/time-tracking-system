@@ -6,7 +6,6 @@ import '../tokens/app_radius.dart';
 import '../tokens/app_spacing.dart';
 import '../tokens/app_typography.dart';
 
-/// Shows a refined confirmation dialog. Returns `true` if confirmed.
 Future<bool> showConfirmDialog(
   BuildContext context, {
   required String title,

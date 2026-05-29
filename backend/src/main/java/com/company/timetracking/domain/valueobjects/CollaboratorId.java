@@ -2,10 +2,6 @@ package com.company.timetracking.domain.valueobjects;
 
 import java.util.UUID;
 
-/**
- * Typed identifier for a {@code Collaborator}. Prevents accidentally passing a
- * raw {@link UUID} of the wrong aggregate.
- */
 public record CollaboratorId(UUID value) {
 
     public CollaboratorId {

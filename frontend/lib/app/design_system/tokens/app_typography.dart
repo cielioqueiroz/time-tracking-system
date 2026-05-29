@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Typographic scale — sizes, weights and line-heights only.
-///
-/// Colors are applied by the theme, not here, so the same scale serves both
-/// light and dark modes.
 abstract final class AppTypography {
   static const String fontFamily = 'Inter';
 

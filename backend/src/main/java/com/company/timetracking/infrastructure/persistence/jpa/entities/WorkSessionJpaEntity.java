@@ -12,9 +12,6 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
-/**
- * JPA persistence model for a work session.
- */
 @Entity
 @Table(name = "work_sessions", indexes = {
         @Index(name = "ix_work_sessions_collaborator_started",
@@ -49,7 +46,6 @@ public class WorkSessionJpaEntity {
     private Instant updatedAt;
 
     protected WorkSessionJpaEntity() {
-        // required by JPA
     }
 
     public WorkSessionJpaEntity(UUID id, UUID collaboratorId, WorkSessionStatus status,

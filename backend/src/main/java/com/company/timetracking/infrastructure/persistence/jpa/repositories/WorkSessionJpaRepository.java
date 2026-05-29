@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-/** Spring Data repository for {@link WorkSessionJpaEntity}. */
 public interface WorkSessionJpaRepository extends JpaRepository<WorkSessionJpaEntity, UUID> {
 
     Optional<WorkSessionJpaEntity> findFirstByCollaboratorIdAndStatus(
@@ -25,19 +24,12 @@ public interface WorkSessionJpaRepository extends JpaRepository<WorkSessionJpaEn
 
     List<WorkSessionJpaEntity> findByCollaboratorIdOrderByStartedAtDesc(UUID collaboratorId);
 
-    /** Read-only projection for the aggregated summary query. */
     interface SummaryProjection {
         long getTotalSessions();
         long getFinishedSessions();
         long getTotalMinutes();
     }
 
-    /**
-     * Aggregates counts and worked minutes in the database, within the
-     * {@code [from, to]} window on {@code startedAt}. The adapter always passes
-     * concrete bounds (never null) — Hibernate cannot infer the type of a null
-     * Instant parameter, so we avoid the {@code (:p is null or ...)} pattern.
-     */
     @Query("""
             select count(w) as totalSessions,
                    coalesce(sum(case when w.status = com.company.timetracking.domain.enums.WorkSessionStatus.FINALIZADA

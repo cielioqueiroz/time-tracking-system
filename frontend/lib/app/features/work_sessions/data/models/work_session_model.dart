@@ -1,6 +1,5 @@
 import '../../domain/entities/work_session.dart';
 
-/// Maps the work-session JSON payload to the domain [WorkSession].
 abstract final class WorkSessionModel {
   static WorkSession fromJson(Map<String, dynamic> json) {
     return WorkSession(

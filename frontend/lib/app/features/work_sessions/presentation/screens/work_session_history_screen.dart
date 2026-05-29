@@ -14,7 +14,6 @@ import '../widgets/export_csv_button.dart';
 import '../widgets/timeline_tile.dart';
 import '../widgets/work_summary_card.dart';
 
-/// Elegant timeline of a collaborator's work sessions.
 class WorkSessionHistoryScreen extends ConsumerWidget {
   const WorkSessionHistoryScreen({super.key, required this.collaboratorId});
 

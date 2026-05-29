@@ -56,7 +56,6 @@ class UpdateCollaboratorUseCaseTest {
         Collaborator existing = Collaborator.create("João", Email.of("joao@empresa.com"), "Dev");
         String id = existing.id().toString();
         when(repository.findById(CollaboratorId.of(id))).thenReturn(Optional.of(existing));
-        // findByEmail returns the same collaborator → not taken by another
         when(repository.findByEmail(any(Email.class))).thenReturn(Optional.of(existing));
         when(repository.save(any(Collaborator.class))).thenAnswer(inv -> inv.getArgument(0));
 
