@@ -78,9 +78,17 @@ public class WorkSessionRepositoryAdapter implements WorkSessionRepository {
                 .stream().map(mapper::toDomain).toList();
     }
 
+    // Concrete bounds for an "open" period: no work session predates the epoch,
+    // and none reaches the year 9999 — so these act as "no lower/upper limit".
+    private static final Instant MIN_BOUND = Instant.EPOCH;
+    private static final Instant MAX_BOUND = Instant.parse("9999-12-31T23:59:59Z");
+
     @Override
     public WorkSessionSummary summaryByCollaborator(CollaboratorId collaboratorId, Instant from, Instant to) {
-        var projection = jpa.summarizeByCollaborator(collaboratorId.value(), from, to);
+        var projection = jpa.summarizeByCollaborator(
+                collaboratorId.value(),
+                from != null ? from : MIN_BOUND,
+                to != null ? to : MAX_BOUND);
         return new WorkSessionSummary(
                 projection.getTotalSessions(),
                 projection.getFinishedSessions(),

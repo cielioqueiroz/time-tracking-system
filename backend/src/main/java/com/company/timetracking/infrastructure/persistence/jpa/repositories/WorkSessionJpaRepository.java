@@ -32,7 +32,12 @@ public interface WorkSessionJpaRepository extends JpaRepository<WorkSessionJpaEn
         long getTotalMinutes();
     }
 
-    /** Aggregates counts and worked minutes in the database; optional date bounds. */
+    /**
+     * Aggregates counts and worked minutes in the database, within the
+     * {@code [from, to]} window on {@code startedAt}. The adapter always passes
+     * concrete bounds (never null) — Hibernate cannot infer the type of a null
+     * Instant parameter, so we avoid the {@code (:p is null or ...)} pattern.
+     */
     @Query("""
             select count(w) as totalSessions,
                    coalesce(sum(case when w.status = com.company.timetracking.domain.enums.WorkSessionStatus.FINALIZADA
@@ -40,8 +45,8 @@ public interface WorkSessionJpaRepository extends JpaRepository<WorkSessionJpaEn
                    coalesce(sum(w.totalMinutes), 0) as totalMinutes
             from WorkSessionJpaEntity w
             where w.collaboratorId = :collaboratorId
-              and (:from is null or w.startedAt >= :from)
-              and (:to is null or w.startedAt <= :to)
+              and w.startedAt >= :from
+              and w.startedAt <= :to
             """)
     SummaryProjection summarizeByCollaborator(@Param("collaboratorId") UUID collaboratorId,
                                               @Param("from") Instant from,
