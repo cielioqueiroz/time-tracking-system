@@ -32,7 +32,7 @@ class GetCollaboratorUseCaseTest {
 
     @Test
     void returnsCollaboratorWhenFound() {
-        Collaborator existing = Collaborator.create("Ana", Email.of("ana@empresa.com"));
+        Collaborator existing = Collaborator.create("Ana", Email.of("ana@empresa.com"), "Analista");
         String id = existing.id().toString();
         when(repository.findById(CollaboratorId.of(id))).thenReturn(Optional.of(existing));
 
@@ -41,6 +41,7 @@ class GetCollaboratorUseCaseTest {
         assertThat(dto.id()).isEqualTo(id);
         assertThat(dto.name()).isEqualTo("Ana");
         assertThat(dto.email()).isEqualTo("ana@empresa.com");
+        assertThat(dto.cargo()).isEqualTo("Analista");
     }
 
     @Test

@@ -9,12 +9,14 @@ void main() {
         'id': '11111111-1111-1111-1111-111111111111',
         'name': 'Ana Souza',
         'email': 'ana@empresa.com',
+        'cargo': 'Desenvolvedora',
         'status': 'TRABALHANDO',
       });
 
       expect(collaborator.id, '11111111-1111-1111-1111-111111111111');
       expect(collaborator.name, 'Ana Souza');
       expect(collaborator.email, 'ana@empresa.com');
+      expect(collaborator.cargo, 'Desenvolvedora');
       expect(collaborator.status, CollaboratorStatus.trabalhando);
       expect(collaborator.status.isWorking, isTrue);
     });
@@ -24,6 +26,7 @@ void main() {
         'id': 'x',
         'name': 'Bob',
         'email': 'bob@empresa.com',
+        'cargo': 'Analista',
         'status': 'FORA_DA_JORNADA',
       });
 
@@ -36,6 +39,7 @@ void main() {
         'id': 'x',
         'name': 'Bob',
         'email': 'bob@empresa.com',
+        'cargo': 'Analista',
         'status': 'WHATEVER',
       });
 
@@ -43,9 +47,10 @@ void main() {
     });
   });
 
-  test('toWriteJson serializes only name and email', () {
-    final json = CollaboratorModel.toWriteJson(name: 'Ana', email: 'ana@empresa.com');
+  test('toWriteJson serializes name, email and cargo', () {
+    final json = CollaboratorModel.toWriteJson(
+        name: 'Ana', email: 'ana@empresa.com', cargo: 'Dev');
 
-    expect(json, {'name': 'Ana', 'email': 'ana@empresa.com'});
+    expect(json, {'name': 'Ana', 'email': 'ana@empresa.com', 'cargo': 'Dev'});
   });
 }

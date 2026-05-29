@@ -64,7 +64,7 @@ public class CollaboratorController {
     public ResponseEntity<ApiResponse<CollaboratorResponse>> create(
             @Valid @RequestBody CreateCollaboratorRequest request) {
         var dto = createUseCase.execute(
-                new CreateCollaboratorCommand(request.name(), request.email()));
+                new CreateCollaboratorCommand(request.name(), request.email(), request.cargo()));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.ok(presenter.toResponse(dto)));
     }
@@ -91,7 +91,7 @@ public class CollaboratorController {
             @PathVariable String id,
             @Valid @RequestBody UpdateCollaboratorRequest request) {
         var dto = updateUseCase.execute(
-                new UpdateCollaboratorCommand(id, request.name(), request.email()));
+                new UpdateCollaboratorCommand(id, request.name(), request.email(), request.cargo()));
         return ResponseEntity.ok(ApiResponse.ok(presenter.toResponse(dto)));
     }
 

@@ -13,6 +13,7 @@ public class CollaboratorDtoMapper {
                 collaborator.id().toString(),
                 collaborator.name(),
                 collaborator.email().value(),
+                collaborator.cargo(),
                 collaborator.status()
         );
     }

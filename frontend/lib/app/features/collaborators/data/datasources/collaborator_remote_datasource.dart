@@ -23,10 +23,14 @@ class CollaboratorRemoteDataSource {
         .toList();
   }
 
-  Future<Collaborator> create({required String name, required String email}) async {
+  Future<Collaborator> create({
+    required String name,
+    required String email,
+    required String cargo,
+  }) async {
     final response = await _dio.post<Map<String, dynamic>>(
       ApiConstants.collaborators,
-      data: CollaboratorModel.toWriteJson(name: name, email: email),
+      data: CollaboratorModel.toWriteJson(name: name, email: email, cargo: cargo),
     );
     return CollaboratorModel.fromJson(
         response.data!['data'] as Map<String, dynamic>);
@@ -36,10 +40,11 @@ class CollaboratorRemoteDataSource {
     required String id,
     required String name,
     required String email,
+    required String cargo,
   }) async {
     final response = await _dio.put<Map<String, dynamic>>(
       '${ApiConstants.collaborators}/$id',
-      data: CollaboratorModel.toWriteJson(name: name, email: email),
+      data: CollaboratorModel.toWriteJson(name: name, email: email, cargo: cargo),
     );
     return CollaboratorModel.fromJson(
         response.data!['data'] as Map<String, dynamic>);

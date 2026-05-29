@@ -17,11 +17,13 @@ class Collaborator {
     required this.id,
     required this.name,
     required this.email,
+    required this.cargo,
     required this.status,
   });
 
   final String id;
   final String name;
   final String email;
+  final String cargo;
   final CollaboratorStatus status;
 }

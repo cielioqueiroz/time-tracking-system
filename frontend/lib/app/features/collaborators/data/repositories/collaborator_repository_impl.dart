@@ -15,16 +15,21 @@ class CollaboratorRepositoryImpl implements CollaboratorRepository {
       _guard(() => _remote.list(page: page, size: size));
 
   @override
-  Future<Collaborator> create({required String name, required String email}) =>
-      _guard(() => _remote.create(name: name, email: email));
+  Future<Collaborator> create({
+    required String name,
+    required String email,
+    required String cargo,
+  }) =>
+      _guard(() => _remote.create(name: name, email: email, cargo: cargo));
 
   @override
   Future<Collaborator> update({
     required String id,
     required String name,
     required String email,
+    required String cargo,
   }) =>
-      _guard(() => _remote.update(id: id, name: name, email: email));
+      _guard(() => _remote.update(id: id, name: name, email: email, cargo: cargo));
 
   @override
   Future<void> delete(String id) => _guard(() => _remote.delete(id));

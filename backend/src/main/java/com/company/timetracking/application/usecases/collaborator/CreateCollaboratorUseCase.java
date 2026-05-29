@@ -29,7 +29,7 @@ public class CreateCollaboratorUseCase {
         if (repository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException(email.value());
         }
-        Collaborator collaborator = Collaborator.create(command.name(), email);
+        Collaborator collaborator = Collaborator.create(command.name(), email, command.cargo());
         return mapper.toDto(repository.save(collaborator));
     }
 }

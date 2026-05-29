@@ -48,7 +48,7 @@ class FinishWorkSessionUseCaseTest {
 
     @Test
     void finishesSessionComputingMinutesAndMarksOffDuty() {
-        Collaborator collaborator = Collaborator.create("Ana", Email.of("ana@empresa.com"));
+        Collaborator collaborator = Collaborator.create("Ana", Email.of("ana@empresa.com"), "Dev");
         collaborator.markWorking();
         CollaboratorId cid = collaborator.id();
         String id = cid.toString();
@@ -79,7 +79,7 @@ class FinishWorkSessionUseCaseTest {
 
     @Test
     void rejectsWhenNoActiveSession() {
-        Collaborator collaborator = Collaborator.create("Bob", Email.of("bob@empresa.com"));
+        Collaborator collaborator = Collaborator.create("Bob", Email.of("bob@empresa.com"), "QA");
         String id = collaborator.id().toString();
         when(collaboratorRepository.findById(CollaboratorId.of(id))).thenReturn(Optional.of(collaborator));
         when(workSessionRepository.findActiveByCollaborator(CollaboratorId.of(id))).thenReturn(Optional.empty());

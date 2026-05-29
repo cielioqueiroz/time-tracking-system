@@ -37,6 +37,7 @@ public class CollaboratorRepositoryAdapter implements CollaboratorRepository {
                 .orElseGet(() -> mapper.toJpa(collaborator));
         entity.setName(collaborator.name());
         entity.setEmail(collaborator.email().value());
+        entity.setCargo(collaborator.cargo());
         entity.setStatus(collaborator.status());
         return mapper.toDomain(jpa.save(entity));
     }

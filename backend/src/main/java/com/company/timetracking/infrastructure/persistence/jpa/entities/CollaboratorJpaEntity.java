@@ -30,6 +30,9 @@ public class CollaboratorJpaEntity {
     @Column(nullable = false, length = 255)
     private String email;
 
+    @Column(nullable = false, length = 100)
+    private String cargo;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 32)
     private CollaboratorStatus status;
@@ -44,11 +47,12 @@ public class CollaboratorJpaEntity {
         // required by JPA
     }
 
-    public CollaboratorJpaEntity(UUID id, String name, String email,
+    public CollaboratorJpaEntity(UUID id, String name, String email, String cargo,
                                  CollaboratorStatus status) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.cargo = cargo;
         this.status = status;
     }
 
@@ -82,6 +86,14 @@ public class CollaboratorJpaEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
     }
 
     public CollaboratorStatus getStatus() {

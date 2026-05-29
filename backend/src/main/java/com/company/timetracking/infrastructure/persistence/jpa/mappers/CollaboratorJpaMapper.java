@@ -15,6 +15,7 @@ public class CollaboratorJpaMapper {
                 domain.id().value(),
                 domain.name(),
                 domain.email().value(),
+                domain.cargo(),
                 domain.status()
         );
     }
@@ -24,6 +25,7 @@ public class CollaboratorJpaMapper {
                 CollaboratorId.of(jpa.getId()),
                 jpa.getName(),
                 Email.of(jpa.getEmail()),
+                jpa.getCargo(),
                 jpa.getStatus()
         );
     }

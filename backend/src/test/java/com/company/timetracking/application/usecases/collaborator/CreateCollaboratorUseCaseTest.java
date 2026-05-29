@@ -35,10 +35,12 @@ class CreateCollaboratorUseCaseTest {
         when(repository.existsByEmail(any(Email.class))).thenReturn(false);
         when(repository.save(any(Collaborator.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        var dto = useCase().execute(new CreateCollaboratorCommand("José Silva", "jose@empresa.com"));
+        var dto = useCase().execute(
+                new CreateCollaboratorCommand("José Silva", "jose@empresa.com", "Desenvolvedor"));
 
         assertThat(dto.name()).isEqualTo("José Silva");
         assertThat(dto.email()).isEqualTo("jose@empresa.com");
+        assertThat(dto.cargo()).isEqualTo("Desenvolvedor");
         verify(repository).save(any(Collaborator.class));
     }
 
@@ -47,7 +49,7 @@ class CreateCollaboratorUseCaseTest {
         when(repository.existsByEmail(any(Email.class))).thenReturn(true);
 
         assertThatThrownBy(() ->
-                useCase().execute(new CreateCollaboratorCommand("José", "jose@empresa.com")))
+                useCase().execute(new CreateCollaboratorCommand("José", "jose@empresa.com", "Dev")))
                 .isInstanceOf(EmailAlreadyExistsException.class);
 
         verify(repository, never()).save(any());

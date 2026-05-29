@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../design_system/atoms/app_button.dart';
 import '../../../../design_system/atoms/app_card.dart';
+import '../../../../design_system/atoms/app_text_field.dart';
 import '../../../../design_system/layouts/app_page.dart';
 import '../../../../design_system/molecules/app_dialog.dart';
 import '../../../../design_system/molecules/app_feedback.dart';
@@ -29,6 +30,25 @@ class CollaboratorsScreen extends ConsumerStatefulWidget {
 
 class _CollaboratorsScreenState extends ConsumerState<CollaboratorsScreen> {
   String? _busyId;
+  final _searchController = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Collaborator> _applySearch(List<Collaborator> all) {
+    final q = _query.trim().toLowerCase();
+    if (q.isEmpty) return all;
+    return all
+        .where((c) =>
+            c.name.toLowerCase().contains(q) ||
+            c.email.toLowerCase().contains(q) ||
+            c.cargo.toLowerCase().contains(q))
+        .toList();
+  }
 
   Future<void> _runJourneyAction(
     Collaborator c,
@@ -103,36 +123,57 @@ class _CollaboratorsScreenState extends ConsumerState<CollaboratorsScreen> {
               onAction: () => context.pushNamed(AppRoutes.newCollaboratorName),
             );
           }
-          return RefreshIndicator(
-            onRefresh: () => ref.read(collaboratorsControllerProvider.notifier).refresh(),
-            child: ListView.separated(
-              padding: const EdgeInsets.only(bottom: AppSpacing.huge),
-              itemCount: collaborators.length,
-              separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
-              itemBuilder: (context, index) {
-                final c = collaborators[index];
-                return FadeSlideIn(
-                  delay: Duration(milliseconds: 40 * index),
-                  child: CollaboratorCard(
-                    collaborator: c,
-                    busy: _busyId == c.id,
-                    onStart: () => _runJourneyAction(
-                        c, ref.read(workSessionActionsProvider).start, 'Jornada iniciada.'),
-                    onFinish: () => _runJourneyAction(
-                        c, ref.read(workSessionActionsProvider).finish, 'Jornada encerrada.'),
-                    onEdit: () => context.pushNamed(
-                      AppRoutes.editCollaboratorName,
-                      pathParameters: {'id': c.id},
-                    ),
-                    onHistory: () => context.pushNamed(
-                      AppRoutes.historyName,
-                      pathParameters: {'id': c.id},
-                    ),
-                    onDelete: () => _confirmDelete(c),
-                  ),
-                );
-              },
-            ),
+          final filtered = _applySearch(collaborators);
+          return Column(
+            children: [
+              AppTextField(
+                label: 'Buscar',
+                hint: 'Filtrar por nome, cargo ou e-mail',
+                controller: _searchController,
+                onChanged: (v) => setState(() => _query = v),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Expanded(
+                child: filtered.isEmpty
+                    ? const EmptyStateView(
+                        icon: Icons.search_off_rounded,
+                        title: 'Nenhum resultado',
+                        message: 'Nenhum colaborador corresponde à sua busca.',
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () =>
+                            ref.read(collaboratorsControllerProvider.notifier).refresh(),
+                        child: ListView.separated(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.huge),
+                          itemCount: filtered.length,
+                          separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+                          itemBuilder: (context, index) {
+                            final c = filtered[index];
+                            return FadeSlideIn(
+                              delay: Duration(milliseconds: 40 * index),
+                              child: CollaboratorCard(
+                                collaborator: c,
+                                busy: _busyId == c.id,
+                                onStart: () => _runJourneyAction(c,
+                                    ref.read(workSessionActionsProvider).start, 'Jornada iniciada.'),
+                                onFinish: () => _runJourneyAction(c,
+                                    ref.read(workSessionActionsProvider).finish, 'Jornada encerrada.'),
+                                onEdit: () => context.pushNamed(
+                                  AppRoutes.editCollaboratorName,
+                                  pathParameters: {'id': c.id},
+                                ),
+                                onHistory: () => context.pushNamed(
+                                  AppRoutes.historyName,
+                                  pathParameters: {'id': c.id},
+                                ),
+                                onDelete: () => _confirmDelete(c),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+              ),
+            ],
           );
         },
       ),

@@ -32,8 +32,8 @@ class ListCollaboratorsUseCaseTest {
 
     @Test
     void returnsMappedPageWithMetadata() {
-        var alice = Collaborator.create("Alice", Email.of("alice@empresa.com"));
-        var bob = Collaborator.create("Bob", Email.of("bob@empresa.com"));
+        var alice = Collaborator.create("Alice", Email.of("alice@empresa.com"), "Dev");
+        var bob = Collaborator.create("Bob", Email.of("bob@empresa.com"), "QA");
         var domainPage = new Page<>(List.of(alice, bob), 0, 20, 2L);
         when(repository.findAll(any(PageQuery.class))).thenReturn(domainPage);
 

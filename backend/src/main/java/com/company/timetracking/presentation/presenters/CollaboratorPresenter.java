@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class CollaboratorPresenter {
 
     public CollaboratorResponse toResponse(CollaboratorDto dto) {
-        return new CollaboratorResponse(dto.id(), dto.name(), dto.email(), dto.status());
+        return new CollaboratorResponse(dto.id(), dto.name(), dto.email(), dto.cargo(), dto.status());
     }
 
     public PageResponse<CollaboratorResponse> toPageResponse(PageDto<CollaboratorDto> page) {

@@ -18,7 +18,8 @@ class CollaboratorFlowIT extends AbstractIntegrationTest {
     private static final String COLLABORATORS = "/api/v1/collaborators";
 
     private String createCollaborator(String token, String name, String email) {
-        var response = send(HttpMethod.POST, COLLABORATORS, token, Map.of("name", name, "email", email));
+        var response = send(HttpMethod.POST, COLLABORATORS, token,
+                Map.of("name", name, "email", email, "cargo", "Desenvolvedor"));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         return readTree(response.getBody()).path("data").path("id").asText();
     }
@@ -29,11 +30,12 @@ class CollaboratorFlowIT extends AbstractIntegrationTest {
 
         // create
         var createResp = send(HttpMethod.POST, COLLABORATORS, token,
-                Map.of("name", "Ana Souza", "email", "ana@empresa.com"));
+                Map.of("name", "Ana Souza", "email", "ana@empresa.com", "cargo", "Analista"));
         assertThat(createResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         var created = readTree(createResp.getBody()).path("data");
         String id = created.path("id").asText();
         assertThat(created.path("name").asText()).isEqualTo("Ana Souza");
+        assertThat(created.path("cargo").asText()).isEqualTo("Analista");
         assertThat(created.path("status").asText()).isEqualTo("FORA_DA_JORNADA");
 
         // get
@@ -81,10 +83,11 @@ class CollaboratorFlowIT extends AbstractIntegrationTest {
 
         // update
         var updateResp = send(HttpMethod.PUT, COLLABORATORS + "/" + id, token,
-                Map.of("name", "Ana Lima", "email", "ana.lima@empresa.com"));
+                Map.of("name", "Ana Lima", "email", "ana.lima@empresa.com", "cargo", "Tech Lead"));
         assertThat(updateResp.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(readTree(updateResp.getBody()).path("data").path("name").asText())
-                .isEqualTo("Ana Lima");
+        var updated = readTree(updateResp.getBody()).path("data");
+        assertThat(updated.path("name").asText()).isEqualTo("Ana Lima");
+        assertThat(updated.path("cargo").asText()).isEqualTo("Tech Lead");
 
         // delete
         var deleteResp = send(HttpMethod.DELETE, COLLABORATORS + "/" + id, token, null);
@@ -101,7 +104,7 @@ class CollaboratorFlowIT extends AbstractIntegrationTest {
         createCollaborator(token, "Primeiro", "dup@empresa.com");
 
         var response = send(HttpMethod.POST, COLLABORATORS, token,
-                Map.of("name", "Segundo", "email", "dup@empresa.com"));
+                Map.of("name", "Segundo", "email", "dup@empresa.com", "cargo", "Dev"));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(readTree(response.getBody()).path("errors").get(0).path("code").asText())
@@ -134,7 +137,7 @@ class CollaboratorFlowIT extends AbstractIntegrationTest {
         String token = adminToken();
 
         var response = send(HttpMethod.POST, COLLABORATORS, token,
-                Map.of("name", "Dan", "email", "not-an-email"));
+                Map.of("name", "Dan", "email", "not-an-email", "cargo", "Dev"));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         var firstError = readTree(response.getBody()).path("errors").get(0);

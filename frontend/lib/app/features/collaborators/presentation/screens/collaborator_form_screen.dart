@@ -28,9 +28,11 @@ class CollaboratorFormScreen extends ConsumerStatefulWidget {
 class _CollaboratorFormScreenState extends ConsumerState<CollaboratorFormScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _cargoController = TextEditingController();
 
   String? _nameError;
   String? _emailError;
+  String? _cargoError;
   bool _submitting = false;
   bool _prefilled = false;
 
@@ -38,6 +40,7 @@ class _CollaboratorFormScreenState extends ConsumerState<CollaboratorFormScreen>
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _cargoController.dispose();
     super.dispose();
   }
 
@@ -49,6 +52,7 @@ class _CollaboratorFormScreenState extends ConsumerState<CollaboratorFormScreen>
     if (existing != null) {
       _nameController.text = existing.name;
       _emailController.text = existing.email;
+      _cargoController.text = existing.cargo;
       _prefilled = true;
     }
   }
@@ -56,14 +60,16 @@ class _CollaboratorFormScreenState extends ConsumerState<CollaboratorFormScreen>
   bool _validate() {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
+    final cargo = _cargoController.text.trim();
     final emailRegex = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$');
     setState(() {
       _nameError = name.isEmpty ? 'O nome é obrigatório.' : null;
       _emailError = email.isEmpty
           ? 'O e-mail é obrigatório.'
           : (!emailRegex.hasMatch(email) ? 'E-mail inválido.' : null);
+      _cargoError = cargo.isEmpty ? 'O cargo é obrigatório.' : null;
     });
-    return _nameError == null && _emailError == null;
+    return _nameError == null && _emailError == null && _cargoError == null;
   }
 
   Future<void> _submit() async {
@@ -73,12 +79,14 @@ class _CollaboratorFormScreenState extends ConsumerState<CollaboratorFormScreen>
     final controller = ref.read(collaboratorsControllerProvider.notifier);
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
+    final cargo = _cargoController.text.trim();
 
     try {
       if (widget.isEditing) {
-        await controller.edit(id: widget.collaboratorId!, name: name, email: email);
+        await controller.edit(
+            id: widget.collaboratorId!, name: name, email: email, cargo: cargo);
       } else {
-        await controller.create(name: name, email: email);
+        await controller.create(name: name, email: email, cargo: cargo);
       }
       if (!mounted) return;
       AppFeedback.success(
@@ -89,6 +97,7 @@ class _CollaboratorFormScreenState extends ConsumerState<CollaboratorFormScreen>
       setState(() {
         _nameError = f.fieldErrors['name'] ?? _nameError;
         _emailError = f.fieldErrors['email'] ?? _emailError;
+        _cargoError = f.fieldErrors['cargo'] ?? _cargoError;
       });
       AppFeedback.error(context, f.message);
     } on Failure catch (f) {
@@ -135,6 +144,16 @@ class _CollaboratorFormScreenState extends ConsumerState<CollaboratorFormScreen>
                 errorText: _emailError,
                 onChanged: (_) {
                   if (_emailError != null) setState(() => _emailError = null);
+                },
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              AppTextField(
+                label: 'Cargo',
+                hint: 'Ex.: Desenvolvedor',
+                controller: _cargoController,
+                errorText: _cargoError,
+                onChanged: (_) {
+                  if (_cargoError != null) setState(() => _cargoError = null);
                 },
                 onSubmitted: (_) => _submit(),
               ),

@@ -16,5 +16,10 @@ public record UpdateCollaboratorRequest(
         @Schema(example = "jose.silva@empresa.com")
         @NotBlank(message = "O e-mail é obrigatório.")
         @Email(message = "E-mail inválido.")
-        String email
+        String email,
+
+        @Schema(example = "Desenvolvedor")
+        @NotBlank(message = "O cargo é obrigatório.")
+        @Size(max = 100, message = "O cargo deve ter no máximo 100 caracteres.")
+        String cargo
 ) {}

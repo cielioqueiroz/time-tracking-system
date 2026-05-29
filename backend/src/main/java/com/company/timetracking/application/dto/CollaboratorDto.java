@@ -7,5 +7,6 @@ public record CollaboratorDto(
         String id,
         String name,
         String email,
+        String cargo,
         CollaboratorStatus status
 ) {}

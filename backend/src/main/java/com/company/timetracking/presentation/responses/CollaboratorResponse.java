@@ -7,5 +7,6 @@ public record CollaboratorResponse(
         String id,
         String name,
         String email,
+        String cargo,
         CollaboratorStatus status
 ) {}

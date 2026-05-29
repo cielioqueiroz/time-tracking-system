@@ -41,6 +41,7 @@ public class UpdateCollaboratorUseCase {
 
         collaborator.rename(command.name());
         collaborator.changeEmail(newEmail);
+        collaborator.changeCargo(command.cargo());
         return mapper.toDto(repository.save(collaborator));
     }
 }

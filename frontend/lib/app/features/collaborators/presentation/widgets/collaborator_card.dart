@@ -53,10 +53,15 @@ class CollaboratorCard extends StatelessWidget {
                         style: AppTypography.titleMd
                             .copyWith(color: palette.textPrimary, fontWeight: FontWeight.w700)),
                     const SizedBox(height: 2),
+                    Text(collaborator.cargo,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.bodySm.copyWith(
+                            color: palette.textSecondary, fontWeight: FontWeight.w600)),
                     Text(collaborator.email,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTypography.bodySm.copyWith(color: palette.textMuted)),
+                        style: AppTypography.caption.copyWith(color: palette.textMuted)),
                   ],
                 ),
               ),

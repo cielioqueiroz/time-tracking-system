@@ -46,7 +46,7 @@ class StartWorkSessionUseCaseTest {
 
     @Test
     void startsSessionAndMarksCollaboratorWorking() {
-        Collaborator collaborator = Collaborator.create("Ana", Email.of("ana@empresa.com"));
+        Collaborator collaborator = Collaborator.create("Ana", Email.of("ana@empresa.com"), "Dev");
         String id = collaborator.id().toString();
         when(collaboratorRepository.findById(CollaboratorId.of(id))).thenReturn(Optional.of(collaborator));
         when(workSessionRepository.existsActiveByCollaborator(CollaboratorId.of(id))).thenReturn(false);
@@ -75,7 +75,7 @@ class StartWorkSessionUseCaseTest {
 
     @Test
     void rejectsWhenActiveSessionAlreadyExists() {
-        Collaborator collaborator = Collaborator.create("Bob", Email.of("bob@empresa.com"));
+        Collaborator collaborator = Collaborator.create("Bob", Email.of("bob@empresa.com"), "QA");
         String id = collaborator.id().toString();
         when(collaboratorRepository.findById(CollaboratorId.of(id))).thenReturn(Optional.of(collaborator));
         when(workSessionRepository.existsActiveByCollaborator(CollaboratorId.of(id))).thenReturn(true);

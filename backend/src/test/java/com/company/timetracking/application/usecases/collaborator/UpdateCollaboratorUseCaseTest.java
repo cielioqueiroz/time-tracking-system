@@ -36,29 +36,32 @@ class UpdateCollaboratorUseCaseTest {
 
     @Test
     void updatesNameAndEmailWhenEmailIsFree() {
-        Collaborator existing = Collaborator.create("Nome Antigo", Email.of("antigo@empresa.com"));
+        Collaborator existing = Collaborator.create("Nome Antigo", Email.of("antigo@empresa.com"), "Dev");
         String id = existing.id().toString();
         when(repository.findById(CollaboratorId.of(id))).thenReturn(Optional.of(existing));
         when(repository.findByEmail(any(Email.class))).thenReturn(Optional.empty());
         when(repository.save(any(Collaborator.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        var dto = useCase().execute(new UpdateCollaboratorCommand(id, "Nome Novo", "novo@empresa.com"));
+        var dto = useCase().execute(
+                new UpdateCollaboratorCommand(id, "Nome Novo", "novo@empresa.com", "Tech Lead"));
 
         assertThat(dto.name()).isEqualTo("Nome Novo");
         assertThat(dto.email()).isEqualTo("novo@empresa.com");
+        assertThat(dto.cargo()).isEqualTo("Tech Lead");
         verify(repository).save(any(Collaborator.class));
     }
 
     @Test
     void allowsKeepingOwnEmail() {
-        Collaborator existing = Collaborator.create("João", Email.of("joao@empresa.com"));
+        Collaborator existing = Collaborator.create("João", Email.of("joao@empresa.com"), "Dev");
         String id = existing.id().toString();
         when(repository.findById(CollaboratorId.of(id))).thenReturn(Optional.of(existing));
         // findByEmail returns the same collaborator → not taken by another
         when(repository.findByEmail(any(Email.class))).thenReturn(Optional.of(existing));
         when(repository.save(any(Collaborator.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        var dto = useCase().execute(new UpdateCollaboratorCommand(id, "João Atualizado", "joao@empresa.com"));
+        var dto = useCase().execute(
+                new UpdateCollaboratorCommand(id, "João Atualizado", "joao@empresa.com", "Dev"));
 
         assertThat(dto.name()).isEqualTo("João Atualizado");
         assertThat(dto.email()).isEqualTo("joao@empresa.com");
@@ -69,7 +72,7 @@ class UpdateCollaboratorUseCaseTest {
         when(repository.findById(any(CollaboratorId.class))).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> useCase().execute(
-                new UpdateCollaboratorCommand(CollaboratorId.generate().toString(), "X", "x@empresa.com")))
+                new UpdateCollaboratorCommand(CollaboratorId.generate().toString(), "X", "x@empresa.com", "Dev")))
                 .isInstanceOf(CollaboratorNotFoundException.class);
 
         verify(repository, never()).save(any());
@@ -77,14 +80,14 @@ class UpdateCollaboratorUseCaseTest {
 
     @Test
     void rejectsWhenEmailBelongsToAnotherCollaborator() {
-        Collaborator existing = Collaborator.create("Maria", Email.of("maria@empresa.com"));
+        Collaborator existing = Collaborator.create("Maria", Email.of("maria@empresa.com"), "Dev");
         String id = existing.id().toString();
-        Collaborator another = Collaborator.create("Outra", Email.of("ocupado@empresa.com"));
+        Collaborator another = Collaborator.create("Outra", Email.of("ocupado@empresa.com"), "Dev");
         when(repository.findById(CollaboratorId.of(id))).thenReturn(Optional.of(existing));
         when(repository.findByEmail(any(Email.class))).thenReturn(Optional.of(another));
 
         assertThatThrownBy(() -> useCase().execute(
-                new UpdateCollaboratorCommand(id, "Maria", "ocupado@empresa.com")))
+                new UpdateCollaboratorCommand(id, "Maria", "ocupado@empresa.com", "Dev")))
                 .isInstanceOf(EmailAlreadyExistsException.class);
 
         verify(repository, never()).save(any());

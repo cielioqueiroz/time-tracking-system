@@ -41,12 +41,23 @@ construído sobre **Arquitetura Hexagonal + Clean Architecture** no backend e
 ---
 
 ## ✨ Funcionalidades
-- Cadastro, edição e exclusão de colaboradores (e-mail único).
+- Cadastro, edição e exclusão de colaboradores. Campos: **Nome, E-mail e Cargo** (e-mail único, validação de formato).
+- **Busca** na lista de colaboradores (por nome, cargo ou e-mail).
 - Início e encerramento de jornada, com **cálculo automático de horas** e status do colaborador.
 - Histórico de jornadas paginado, em linha do tempo.
 - **Relatório de horas** por colaborador (total de jornadas, finalizadas e minutos) — agregado no banco.
 - **Exportação das jornadas em CSV**.
 - Autenticação **JWT** (stateless), documentação **Swagger/OpenAPI**.
+
+## 📌 Decisões de projeto
+- **Exclusão de colaborador:** optou-se por **excluir em cascata** — ao remover um
+  colaborador, suas jornadas também são removidas (FK `ON DELETE CASCADE` na tabela
+  `work_sessions`, com aviso explícito na confirmação da UI). A alternativa de
+  **bloquear** a exclusão quando houvesse jornadas foi descartada para manter o
+  fluxo simples e previsível para o gestor.
+- **Status do colaborador** (`TRABALHANDO` / `FORA_DA_JORNADA`) é derivado das ações
+  de jornada — nunca editado manualmente.
+- **Cálculo de horas** é feito no backend, no encerramento da jornada.
 
 ---
 

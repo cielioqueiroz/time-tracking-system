@@ -20,8 +20,12 @@ class CollaboratorsController extends AsyncNotifier<List<Collaborator>> {
     state = await AsyncValue.guard(_repo.list);
   }
 
-  Future<void> create({required String name, required String email}) async {
-    await _repo.create(name: name, email: email);
+  Future<void> create({
+    required String name,
+    required String email,
+    required String cargo,
+  }) async {
+    await _repo.create(name: name, email: email, cargo: cargo);
     await refresh();
   }
 
@@ -29,8 +33,9 @@ class CollaboratorsController extends AsyncNotifier<List<Collaborator>> {
     required String id,
     required String name,
     required String email,
+    required String cargo,
   }) async {
-    await _repo.update(id: id, name: name, email: email);
+    await _repo.update(id: id, name: name, email: email, cargo: cargo);
     await refresh();
   }
 
