@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * Outbound adapter implementing the {@link CollaboratorRepository} port over
  * Spring Data JPA. Translates the domain pagination contract to/from Spring's.
@@ -40,12 +42,12 @@ public class CollaboratorRepositoryAdapter implements CollaboratorRepository {
     }
 
     @Override
-    public java.util.Optional<Collaborator> findById(CollaboratorId id) {
+    public Optional<Collaborator> findById(CollaboratorId id) {
         return jpa.findById(id.value()).map(mapper::toDomain);
     }
 
     @Override
-    public java.util.Optional<Collaborator> findByEmail(Email email) {
+    public Optional<Collaborator> findByEmail(Email email) {
         return jpa.findByEmailIgnoreCase(email.value()).map(mapper::toDomain);
     }
 

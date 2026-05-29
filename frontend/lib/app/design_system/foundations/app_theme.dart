@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../tokens/app_colors.dart';
 import '../tokens/app_radius.dart';
 import '../tokens/app_typography.dart';
+import 'app_fonts.dart';
 import 'app_theme_extension.dart';
 
 /// Builds Material [ThemeData] for both brightness modes from design tokens.
@@ -26,29 +27,21 @@ abstract final class AppTheme {
       onError: Colors.white,
     );
 
-    final textTheme = _textTheme(p.textPrimary);
-
     return ThemeData(
       useMaterial3: true,
       brightness: p.brightness,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: p.background,
-      fontFamily: AppTypography.fontFamily,
-      textTheme: textTheme,
+      textTheme: AppFonts.sansTextTheme(_textTheme(p.textPrimary)),
       dividerColor: p.border,
+      splashFactory: NoSplash.splashFactory,
       extensions: [AppThemeExt(palette: p)],
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: p.surface,
-        border: const OutlineInputBorder(borderRadius: AppRadius.brMd),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: AppRadius.brMd,
-          borderSide: BorderSide(color: p.border),
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: p.textPrimary.withValues(alpha: 0.92),
+          borderRadius: AppRadius.brSm,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: AppRadius.brMd,
-          borderSide: BorderSide(color: p.accent, width: 1.5),
-        ),
+        textStyle: AppFonts.sans(AppTypography.caption.copyWith(color: p.surface)),
       ),
     );
   }

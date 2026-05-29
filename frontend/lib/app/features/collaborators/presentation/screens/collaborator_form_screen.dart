@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-/// Create/Edit collaborator screen. Thin placeholder for ETAPA 4; the polished
-/// form with elegant validation/feedback is built in ETAPA 5.
-class CollaboratorFormScreen extends ConsumerWidget {
+import '../../../../core/errors/failure.dart';
+import '../../../../design_system/atoms/app_button.dart';
+import '../../../../design_system/atoms/app_card.dart';
+import '../../../../design_system/atoms/app_text_field.dart';
+import '../../../../design_system/layouts/app_page.dart';
+import '../../../../design_system/molecules/app_feedback.dart';
+import '../../../../design_system/tokens/app_spacing.dart';
+import '../../application/collaborators_controller.dart';
+
+/// Create/Edit collaborator form with inline validation and server-side field
+/// error mapping.
+class CollaboratorFormScreen extends ConsumerStatefulWidget {
   const CollaboratorFormScreen({super.key, this.collaboratorId});
 
   /// Null = create mode; non-null = edit mode.
@@ -12,10 +22,144 @@ class CollaboratorFormScreen extends ConsumerWidget {
   bool get isEditing => collaboratorId != null;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(title: Text(isEditing ? 'Editar colaborador' : 'Novo colaborador')),
-      body: const Center(child: Text('Formulário — em construção (ETAPA 5)')),
+  ConsumerState<CollaboratorFormScreen> createState() => _CollaboratorFormScreenState();
+}
+
+class _CollaboratorFormScreenState extends ConsumerState<CollaboratorFormScreen> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+
+  String? _nameError;
+  String? _emailError;
+  bool _submitting = false;
+  bool _prefilled = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  /// Prefill once, in edit mode, from the already-loaded list.
+  void _prefillIfNeeded() {
+    if (_prefilled || !widget.isEditing) return;
+    final list = ref.read(collaboratorsControllerProvider).valueOrNull;
+    final existing = list?.where((c) => c.id == widget.collaboratorId).firstOrNull;
+    if (existing != null) {
+      _nameController.text = existing.name;
+      _emailController.text = existing.email;
+      _prefilled = true;
+    }
+  }
+
+  bool _validate() {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final emailRegex = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$');
+    setState(() {
+      _nameError = name.isEmpty ? 'O nome é obrigatório.' : null;
+      _emailError = email.isEmpty
+          ? 'O e-mail é obrigatório.'
+          : (!emailRegex.hasMatch(email) ? 'E-mail inválido.' : null);
+    });
+    return _nameError == null && _emailError == null;
+  }
+
+  Future<void> _submit() async {
+    if (!_validate()) return;
+    setState(() => _submitting = true);
+
+    final controller = ref.read(collaboratorsControllerProvider.notifier);
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+
+    try {
+      if (widget.isEditing) {
+        await controller.edit(id: widget.collaboratorId!, name: name, email: email);
+      } else {
+        await controller.create(name: name, email: email);
+      }
+      if (!mounted) return;
+      AppFeedback.success(
+          context, widget.isEditing ? 'Colaborador atualizado.' : 'Colaborador criado.');
+      context.pop();
+    } on ValidationFailure catch (f) {
+      if (!mounted) return;
+      setState(() {
+        _nameError = f.fieldErrors['name'] ?? _nameError;
+        _emailError = f.fieldErrors['email'] ?? _emailError;
+      });
+      AppFeedback.error(context, f.message);
+    } on Failure catch (f) {
+      if (!mounted) return;
+      AppFeedback.error(context, f.message);
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _prefillIfNeeded();
+
+    return AppPage(
+      title: widget.isEditing ? 'Editar colaborador' : 'Novo colaborador',
+      subtitle: widget.isEditing
+          ? 'Atualize os dados do colaborador'
+          : 'Cadastre um novo colaborador',
+      onBack: () => context.pop(),
+      maxContentWidth: 560,
+      body: SingleChildScrollView(
+        child: AppCard(
+          padding: const EdgeInsets.all(AppSpacing.xxl),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppTextField(
+                label: 'Nome',
+                hint: 'Ex.: José Silva',
+                controller: _nameController,
+                autofocus: true,
+                errorText: _nameError,
+                onChanged: (_) {
+                  if (_nameError != null) setState(() => _nameError = null);
+                },
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              AppTextField(
+                label: 'E-mail',
+                hint: 'Ex.: jose.silva@empresa.com',
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                errorText: _emailError,
+                onChanged: (_) {
+                  if (_emailError != null) setState(() => _emailError = null);
+                },
+                onSubmitted: (_) => _submit(),
+              ),
+              const SizedBox(height: AppSpacing.xxl),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  AppButton(
+                    label: 'Cancelar',
+                    variant: AppButtonVariant.ghost,
+                    onPressed: _submitting ? null : () => context.pop(),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  AppButton(
+                    label: widget.isEditing ? 'Salvar alterações' : 'Criar colaborador',
+                    icon: Icons.check_rounded,
+                    loading: _submitting,
+                    onPressed: _submit,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
